@@ -5,9 +5,14 @@ import brandIcon from "../../../public/dcims-icon.png";
 type LogoProps = {
   variant?: "full" | "compact";
   decorative?: boolean;
+  priority?: boolean;
 };
 
-export function Logo({ variant = "full", decorative = false }: LogoProps) {
+export function Logo({
+  variant = "full",
+  decorative = false,
+  priority = false,
+}: LogoProps) {
   const compact = variant === "compact";
 
   return (
@@ -15,6 +20,7 @@ export function Logo({ variant = "full", decorative = false }: LogoProps) {
       src={compact ? brandIcon : brandLogo}
       alt={decorative ? "" : "Davao Construction Inventory Management System"}
       sizes={compact ? "48px" : "(max-width: 400px) 100vw, 384px"}
+      priority={priority}
       className={
         compact
           ? "size-12 rounded-md object-contain"

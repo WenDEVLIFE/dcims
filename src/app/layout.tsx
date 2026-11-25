@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Manrope } from "next/font/google";
+import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/shared/theme-provider";
 import "./globals.css";
 
@@ -28,7 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-PH" className="min-h-full" suppressHydrationWarning>
       <body className={`${manrope.variable} ${jetBrainsMono.variable} min-h-dvh font-sans antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <Toaster position="bottom-right" closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

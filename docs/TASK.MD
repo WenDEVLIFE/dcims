@@ -218,61 +218,67 @@ Priority: P0
 
 ### Root Layout
 
-- [ ] Configure root layout.
-- [ ] Configure application providers.
-- [ ] Configure theme provider.
-- [ ] Configure toast notification provider.
-- [ ] Configure global styles.
-- [ ] Configure application metadata.
+- [x] Configure root layout.
+- [x] Configure application providers.
+- [x] Configure theme provider.
+- [x] Configure toast notification provider.
+- [x] Configure global styles.
+- [x] Configure application metadata.
 
 ### Sidebar
 
-- [ ] Create desktop sidebar.
-- [ ] Display DCIMS branding.
-- [ ] Implement navigation groups.
-- [ ] Implement active route indicators.
-- [ ] Implement sidebar collapse.
-- [ ] Implement collapsed navigation tooltips.
-- [ ] Implement mobile navigation drawer.
-- [ ] Implement demo user profile section.
-- [ ] Persist sidebar preferences.
+- [x] Create desktop sidebar.
+- [x] Display DCIMS branding.
+- [x] Implement navigation groups.
+- [x] Implement active route indicators.
+- [x] Implement sidebar collapse.
+- [x] Implement collapsed navigation tooltips.
+- [x] Implement mobile navigation drawer.
+- [x] Implement demo user profile section.
+- [x] Persist sidebar preferences.
 
 ### Header
 
-- [ ] Create sticky application header.
-- [ ] Implement breadcrumb navigation.
-- [ ] Implement global search interface.
-- [ ] Implement notification dropdown.
-- [ ] Implement theme toggle.
-- [ ] Implement user profile dropdown.
-- [ ] Implement mobile menu trigger.
+- [x] Create sticky application header.
+- [x] Implement breadcrumb navigation.
+- [ ] Implement global search interface. — Deferred to Phase 21: the search surface needs domain records from Phase 06 and a query layer from Phase 21. Omitting it now avoids shipping a control that does nothing.
+- [ ] Implement notification dropdown. — Deferred to Phase 20: notifications derive from activity records created in Phase 19.
+- [x] Implement theme toggle.
+- [x] Implement user profile dropdown.
+- [x] Implement mobile menu trigger.
 
 ### Main Content
 
-- [ ] Create reusable page container.
-- [ ] Create reusable page header.
-- [ ] Create reusable section header.
-- [ ] Configure responsive content spacing.
-- [ ] Configure maximum content width.
-- [ ] Add portfolio demo indicator.
+- [x] Create reusable page container.
+- [x] Create reusable page header.
+- [x] Create reusable section header.
+- [x] Configure responsive content spacing.
+- [x] Configure maximum content width.
+- [x] Add portfolio demo indicator.
 
 ### Application Routes
 
-- [ ] /dashboard
-- [ ] /materials
-- [ ] /categories
-- [ ] /warehouses
-- [ ] /stock-movements
-- [ ] /projects
-- [ ] /material-requests
-- [ ] /equipment
-- [ ] /suppliers
-- [ ] /purchase-orders
-- [ ] /reports
-- [ ] /activity-logs
-- [ ] /settings
+- [x] /dashboard
+- [x] /materials
+- [x] /categories
+- [x] /warehouses
+- [x] /stock-movements
+- [x] /projects
+- [x] /material-requests
+- [x] /equipment
+- [x] /suppliers
+- [x] /purchase-orders
+- [x] /reports
+- [x] /activity-logs
+- [x] /settings
 
 Redirect the root route to /dashboard.
+
+Implementation note: every module route renders a
+ModulePlaceholder that names the phase responsible for
+the real implementation. No placeholder exposes
+nonfunctional controls, per the prohibition on fake
+functional interface elements.
 
 ### Acceptance Criteria
 
@@ -1878,7 +1884,7 @@ Update this section after each completed phase.
 |-------|--------|----------|--------|
 | 01 | Project Initialization | P0 | Completed |
 | 02 | Branding and Design System | P0 | Completed |
-| 03 | Application Layout | P0 | Pending |
+| 03 | Application Layout | P0 | Completed |
 | 04 | Shared UI Components | P0 | Pending |
 | 05 | Data Models and Utilities | P0 | Pending |
 | 06 | Mock Data | P0 | Pending |

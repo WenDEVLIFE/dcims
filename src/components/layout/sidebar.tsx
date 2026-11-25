@@ -1,8 +1,8 @@
 "use client";
 
+import { BrandLockup } from "@/components/layout/brand-lockup";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
-import { Logo } from "@/components/shared/logo";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { DemoBadge } from "@/components/shared/demo-badge";
 import { Button } from "@/components/ui/button";
@@ -23,12 +23,11 @@ export function Sidebar() {
     >
       <div
         className={cn(
-          "flex h-16 items-center border-b border-sidebar-border px-3",
-          collapsed ? "justify-center" : "justify-start",
+          "flex h-16 items-center border-b border-sidebar-border",
+          collapsed ? "justify-center px-2" : "px-3",
         )}
       >
-        <Logo variant={collapsed ? "compact" : "full"} decorative priority />
-        <span className="sr-only">DCIMS</span>
+        <BrandLockup collapsed={collapsed} />
       </div>
 
       <div className="flex-1 overflow-y-auto py-4">

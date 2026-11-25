@@ -1,8 +1,8 @@
 "use client";
 
+import { BrandLockup } from "@/components/layout/brand-lockup";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { DemoBadge } from "@/components/shared/demo-badge";
-import { Logo } from "@/components/shared/logo";
 import {
   Sheet,
   SheetContent,
@@ -27,7 +27,7 @@ export function MobileNav() {
           <SheetDescription className="sr-only">
             Application modules grouped by function.
           </SheetDescription>
-          <Logo decorative priority />
+          <BrandLockup onNavigate={() => setOpen(false)} />
         </SheetHeader>
         <div className="flex-1 overflow-y-auto py-4">
           <SidebarNav onNavigate={() => setOpen(false)} />

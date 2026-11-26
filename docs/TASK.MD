@@ -368,76 +368,84 @@ Priority: P0
 
 ### TypeScript Models
 
-- [ ] Material
-- [ ] MaterialCategory
-- [ ] Warehouse
-- [ ] InventoryBalance
-- [ ] StockMovement
-- [ ] ConstructionProject
-- [ ] ProjectMaterial
-- [ ] MaterialConsumption
-- [ ] MaterialRequest
-- [ ] MaterialRequestItem
-- [ ] Equipment
-- [ ] EquipmentAssignment
-- [ ] MaintenanceRecord
-- [ ] Supplier
-- [ ] PurchaseOrder
-- [ ] PurchaseOrderItem
-- [ ] ActivityLog
-- [ ] Notification
-- [ ] DemoUser
-- [ ] ApplicationSettings
+- [x] Material
+- [x] MaterialCategory
+- [x] Warehouse
+- [x] InventoryBalance
+- [x] StockMovement
+- [x] ConstructionProject
+- [x] ProjectMaterial
+- [x] MaterialConsumption
+- [x] MaterialRequest
+- [x] MaterialRequestItem
+- [x] Equipment
+- [x] EquipmentAssignment
+- [x] MaintenanceRecord
+- [x] Supplier
+- [x] PurchaseOrder
+- [x] PurchaseOrderItem
+- [x] ActivityLog
+- [x] Notification
+- [x] DemoUser
+- [x] ApplicationSettings
 
 ### Enumerations and Status Types
 
-- [ ] Material status.
-- [ ] Stock movement type.
-- [ ] Warehouse status.
-- [ ] Project status.
-- [ ] Request priority.
-- [ ] Material request status.
-- [ ] Equipment condition.
-- [ ] Equipment status.
-- [ ] Supplier status.
-- [ ] Purchase order status.
-- [ ] Notification type.
+- [x] Material status.
+- [x] Stock movement type.
+- [x] Warehouse status.
+- [x] Project status.
+- [x] Request priority.
+- [x] Material request status.
+- [x] Equipment condition.
+- [x] Equipment status.
+- [x] Supplier status.
+- [x] Purchase order status.
+- [x] Notification type.
 
 ### Utility Functions
 
-- [ ] Generate unique IDs.
-- [ ] Generate material SKU.
-- [ ] Generate warehouse codes.
-- [ ] Generate project codes.
-- [ ] Generate transaction reference numbers.
-- [ ] Generate purchase order numbers.
-- [ ] Generate material request numbers.
-- [ ] Format Philippine Peso currency.
-- [ ] Format numerical quantities.
-- [ ] Format dates.
-- [ ] Format timestamps.
-- [ ] Calculate inventory value.
-- [ ] Calculate weighted-average cost.
-- [ ] Calculate stock status.
-- [ ] Calculate purchase order totals.
-- [ ] Calculate project material expenses.
-- [ ] Generate CSV files.
-- [ ] Escape CSV values safely.
-- [ ] Validate imported JSON data.
+- [x] Generate unique IDs.
+- [x] Generate material SKU.
+- [x] Generate warehouse codes.
+- [x] Generate project codes.
+- [x] Generate transaction reference numbers.
+- [x] Generate purchase order numbers.
+- [x] Generate material request numbers.
+- [x] Format Philippine Peso currency.
+- [x] Format numerical quantities.
+- [x] Format dates.
+- [x] Format timestamps.
+- [x] Calculate inventory value.
+- [x] Calculate weighted-average cost.
+- [x] Calculate stock status.
+- [x] Calculate purchase order totals.
+- [x] Calculate project material expenses.
+- [x] Generate CSV files.
+- [x] Escape CSV values safely.
+- [x] Validate imported JSON data.
 
 ### Validation Schemas
 
-- [ ] Material validation schema.
-- [ ] Category validation schema.
-- [ ] Warehouse validation schema.
-- [ ] Stock movement validation schema.
-- [ ] Project validation schema.
-- [ ] Material request validation schema.
-- [ ] Equipment validation schema.
-- [ ] Supplier validation schema.
-- [ ] Purchase order validation schema.
-- [ ] Application settings validation schema.
-- [ ] Complete demo data import schema.
+- [x] Material validation schema.
+- [x] Category validation schema.
+- [x] Warehouse validation schema.
+- [x] Stock movement validation schema.
+- [x] Project validation schema.
+- [x] Material request validation schema.
+- [x] Equipment validation schema.
+- [x] Supplier validation schema.
+- [x] Purchase order validation schema.
+- [x] Application settings validation schema.
+- [x] Complete demo data import schema.
+
+Implementation notes:
+
+- Domain types live in `src/types/domain.ts` with `src/types/index.ts` as the barrel. Status values are `as const` string unions rather than TypeScript enums, so persisted JSON stays readable and survives rehydration without reverse mapping.
+- Money is integer centavos everywhere; field names carry the `Centavos` suffix so a peso value in a centavos field is a visible mistake.
+- Inventory and costing helpers throw `RangeError` on invalid input instead of returning a plausible wrong number. Callers validate first; the throw catches programming errors rather than user errors.
+- CSV escaping prefixes apostrophes to values starting with `=`, `+`, `-`, `@`, tab, or carriage return, and doubles embedded quotes.
+- `parseDemoData` returns a result object instead of throwing, with one message per validation issue.
 
 ### Acceptance Criteria
 
@@ -1894,7 +1902,7 @@ Update this section after each completed phase.
 | 02 | Branding and Design System | P0 | Completed |
 | 03 | Application Layout | P0 | Completed |
 | 04 | Shared UI Components | P0 | Completed |
-| 05 | Data Models and Utilities | P0 | Pending |
+| 05 | Data Models and Utilities | P0 | Completed |
 | 06 | Mock Data | P0 | Pending |
 | 07 | State Management | P0 | Pending |
 | 08 | Dashboard | P0 | Pending |

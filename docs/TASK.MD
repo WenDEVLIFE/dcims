@@ -295,56 +295,64 @@ Priority: P0
 
 ### shadcn/ui Components
 
-- [ ] Button
-- [ ] Card
-- [ ] Input
-- [ ] Label
-- [ ] Textarea
-- [ ] Select
-- [ ] Checkbox
-- [ ] Switch
-- [ ] Badge
-- [ ] Table
-- [ ] Dialog
-- [ ] Alert Dialog
-- [ ] Sheet
-- [ ] Dropdown Menu
-- [ ] Popover
-- [ ] Tooltip
-- [ ] Tabs
-- [ ] Separator
-- [ ] Skeleton
-- [ ] Avatar
-- [ ] Calendar
-- [ ] Progress
-- [ ] Scroll Area
-- [ ] Command
-- [ ] Breadcrumb
-- [ ] Pagination
+- [x] Button
+- [x] Card
+- [x] Input
+- [x] Label
+- [x] Textarea
+- [x] Select
+- [x] Checkbox
+- [x] Switch
+- [x] Badge
+- [x] Table
+- [x] Dialog
+- [x] Alert Dialog
+- [x] Sheet
+- [x] Dropdown Menu
+- [x] Popover
+- [x] Tooltip
+- [x] Tabs
+- [x] Separator
+- [x] Skeleton
+- [x] Avatar
+- [x] Calendar
+- [x] Progress
+- [x] Scroll Area
+- [x] Command
+- [x] Breadcrumb
+- [x] Pagination
 
 ### Custom Shared Components
 
-- [ ] PageHeader
-- [ ] SectionHeader
-- [ ] StatCard
-- [ ] DataTable
-- [ ] DataTableToolbar
-- [ ] DataTablePagination
-- [ ] SearchInput
-- [ ] FilterDropdown
-- [ ] StatusBadge
-- [ ] EmptyState
-- [ ] LoadingState
-- [ ] ErrorState
-- [ ] ConfirmDialog
-- [ ] FormField
-- [ ] CurrencyInput
-- [ ] DateRangeFilter
-- [ ] ExportButton
-- [ ] ChartContainer
-- [ ] RecordDetails
-- [ ] RowActions
-- [ ] DemoIndicator
+- [x] PageHeader
+- [x] SectionHeader
+- [x] StatCard
+- [x] DataTable
+- [x] DataTableToolbar
+- [x] DataTablePagination
+- [x] SearchInput
+- [x] FilterDropdown
+- [x] StatusBadge
+- [x] EmptyState
+- [x] LoadingState
+- [x] ErrorState
+- [x] ConfirmDialog
+- [x] FormField
+- [x] CurrencyInput
+- [x] DateRangeFilter
+- [x] ExportButton
+- [x] ChartContainer
+- [x] RecordDetails
+- [x] RowActions
+- [x] DemoIndicator
+
+Implementation notes:
+
+- Every stock primitive was audited against the anti-ai-slop rules. `transition-all` was replaced with explicit transition properties in badge, button, progress, switch, and tabs.
+- A base-layer rule in `globals.css` supplies `cursor: pointer` to non-disabled buttons and `[role="button"]` elements, because Tailwind v4 preflight leaves them on the default cursor.
+- `DataTable`, `StatusBadge`, and `RecordDetails` are intentionally domain-agnostic: they take column definitions, a status string, and label/value pairs. Phase 05's domain types plug in without rewriting them.
+- `ExportButton` delegates serialisation to the caller so CSV escaping and formula-injection protection live in one place in Phase 05.
+- `FormField`, `CurrencyInput`, and `DateRangeFilter` carry no form-library dependency, so the React Hook Form versus TanStack Form question does not block them.
 
 ### Acceptance Criteria
 
@@ -1885,7 +1893,7 @@ Update this section after each completed phase.
 | 01 | Project Initialization | P0 | Completed |
 | 02 | Branding and Design System | P0 | Completed |
 | 03 | Application Layout | P0 | Completed |
-| 04 | Shared UI Components | P0 | Pending |
+| 04 | Shared UI Components | P0 | Completed |
 | 05 | Data Models and Utilities | P0 | Pending |
 | 06 | Mock Data | P0 | Pending |
 | 07 | State Management | P0 | Pending |

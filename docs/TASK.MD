@@ -819,28 +819,32 @@ Priority: P0
 
 ### Warehouse Page
 
-- [ ] Create warehouse overview page.
-- [ ] Display warehouse summary cards.
-- [ ] Display warehouse names and codes.
-- [ ] Display warehouse locations.
-- [ ] Display assigned warehouse managers.
-- [ ] Display warehouse inventory value.
-- [ ] Display registered material counts.
-- [ ] Display warehouse status.
+- [x] Create warehouse overview page.
+- [x] Display warehouse summary cards.
+- [x] Display warehouse names and codes.
+- [x] Display warehouse locations.
+- [x] Display assigned warehouse managers.
+- [x] Display warehouse inventory value.
+- [x] Display registered material counts.
+- [x] Display warehouse status.
 
 ### Warehouse Operations
 
-- [ ] Implement create warehouse form.
-- [ ] Implement edit warehouse form.
-- [ ] Implement warehouse details page.
-- [ ] Display warehouse inventory table.
-- [ ] Display warehouse transaction history.
-- [ ] Implement warehouse search.
-- [ ] Implement warehouse status filter.
-- [ ] Implement warehouse stock transfer action.
-- [ ] Prevent duplicate warehouse codes.
-- [ ] Prevent deactivation of warehouses with stock
+- [x] Implement create warehouse form.
+- [x] Implement edit warehouse form.
+- [x] Implement warehouse details page.
+- [x] Display warehouse inventory table.
+- [x] Display warehouse transaction history.
+- [x] Implement warehouse search.
+- [x] Implement warehouse status filter.
+- [x] Implement warehouse stock transfer action.
+- [x] Prevent duplicate warehouse codes.
+- [x] Prevent deactivation of warehouses with stock
       or unresolved transactions.
+
+Implementation note: unresolved transactions are purchase orders assigned to
+the warehouse that have not been received or cancelled. Stock movements are
+committed atomically, and material requests have no assigned warehouse.
 
 ### Acceptance Criteria
 
@@ -1978,7 +1982,7 @@ Update this section after each completed phase.
 | 08 | Dashboard | P0 | Completed |
 | 09 | Materials Management | P0 | Completed |
 | 10 | Categories Management | P1 | Completed |
-| 11 | Warehouse Management | P0 | Pending |
+| 11 | Warehouse Management | P0 | Completed |
 | 12 | Stock Movements | P0 | Pending |
 | 13 | Construction Projects | P1 | Pending |
 | 14 | Material Requests | P1 | Pending |

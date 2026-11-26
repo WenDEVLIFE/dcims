@@ -74,16 +74,33 @@ export const categorySchema = categoryInputSchema.extend({
   updatedAt: timestampSchema,
 });
 
-export const warehouseSchema = z.object({
+export const warehouseInputSchema = z.object({
+  name: z.string().trim().min(1, "Warehouse name is required").max(80),
+  location: z.string().trim().min(1, "Location is required").max(80),
+  address: z.string().trim().min(1, "Address is required").max(200),
+  managerName: z.string().trim().max(80).optional(),
+  contactNumber: z.string().trim().max(30).optional(),
+  storageCapacity: z.string().trim().max(80).optional(),
+});
+
+export type WarehouseInputValues = z.infer<typeof warehouseInputSchema>;
+
+export const warehouseSchema = warehouseInputSchema.extend({
   id: idSchema,
   code: z.string().min(1),
-  name: z.string().min(1, "Warehouse name is required").max(80),
-  location: z.string().min(1, "Location is required").max(80),
-  address: z.string().min(1, "Address is required").max(200),
   status: z.enum(WAREHOUSE_STATUSES),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });
+
+export const warehouseTransferInputSchema = z.object({
+  materialId: z.string().min(1, "Choose a material"),
+  destinationWarehouseId: z.string().min(1, "Choose a destination warehouse"),
+  quantity: z.number().positive("Enter a quantity greater than zero"),
+  notes: z.string().trim().max(300).optional(),
+});
+
+export type WarehouseTransferValues = z.infer<typeof warehouseTransferInputSchema>;
 
 export const stockMovementSchema = z
   .object({

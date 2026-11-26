@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
+import { Suspense } from "react";
 
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { UserMenu } from "@/components/layout/user-menu";
@@ -24,7 +25,9 @@ export function Header() {
         <Menu aria-hidden="true" />
       </Button>
 
-      <Breadcrumbs />
+      <Suspense fallback={null}>
+        <Breadcrumbs />
+      </Suspense>
 
       <div className="ml-auto flex items-center gap-1">
         <ThemeSwitcher />

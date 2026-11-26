@@ -180,18 +180,30 @@ export function inventoryValueByCategory(state: DomainData): SeriesPoint[] {
     .sort((left, right) => right.value - left.value);
 }
 
-export function inventoryValueByWarehouse(state: DomainData): SeriesPoint[] {
-  const totals = new Map<string, number>();
+export interface WarehouseInventoryRow {
+  balance: DomainData["balances"][number];
+  material: DomainData["materials"][number];
+  value: Centavos;
+}
 
+export function warehouseInventoryById(state: Pick<DomainData, "balances" | "materials">) {
+  const materials = new Map(state.materials.map((material) => [material.id, material]));
+  const summaries = new Map<string, { rows: WarehouseInventoryRow[]; value: Centavos }>();
   for (const balance of state.balances) {
-    const material = state.materials.find((item) => item.id === balance.materialId);
+    const material = materials.get(balance.materialId);
     if (!material) continue;
     const value = Math.round(balance.quantity * material.unitCostCentavos);
-    totals.set(balance.warehouseId, (totals.get(balance.warehouseId) ?? 0) + value);
+    const summary = summaries.get(balance.warehouseId) ?? { rows: [], value: 0 };
+    summary.rows.push({ balance, material, value });
+    summary.value += value;
+    summaries.set(balance.warehouseId, summary);
   }
+  return summaries;
+}
 
-  return [...totals.entries()]
-    .map(([warehouseId, value]) => ({
+export function inventoryValueByWarehouse(state: DomainData): SeriesPoint[] {
+  return [...warehouseInventoryById(state)]
+    .map(([warehouseId, { value }]) => ({
       label:
         state.warehouses.find((warehouse) => warehouse.id === warehouseId)?.name ??
         "Unknown",

@@ -17,7 +17,12 @@ import {
   nextSequence,
 } from "@/lib/ids";
 import { appendActivity, type OperationContext } from "@/services/support";
-import { categoryInputSchema, type CategoryInputValues } from "@/schemas/domain";
+import {
+  categoryInputSchema,
+  warehouseInputSchema,
+  type CategoryInputValues,
+  type WarehouseInputValues,
+} from "@/schemas/domain";
 
 /** Master-data operations. These never touch balances or movements. */
 
@@ -272,21 +277,26 @@ export function archiveCategory(
   });
 }
 
+export type WarehouseInput = WarehouseInputValues;
+export type WarehousePatch = Partial<WarehouseInput> & { status?: Warehouse["status"] };
+
 export function createWarehouse(
   data: DomainData,
-  input: { name: string; location: string; address: string },
+  input: WarehouseInput,
   ctx: OperationContext,
 ): DomainResult<DomainData> {
-  if (!input.name.trim() || !input.location.trim() || !input.address.trim()) {
-    return fail("Name, location, and address are required");
+  const parsed = warehouseInputSchema.safeParse(input);
+  if (!parsed.success) return fail(parsed.error.issues[0].message);
+  const codes = data.warehouses.map((warehouse) => warehouse.code.trim().toUpperCase());
+  const code = generateWarehouseCode(parsed.data.location, nextSequence(codes));
+  if (codes.includes(code)) {
+    return fail("A warehouse with this code already exists");
   }
 
   const warehouse: Warehouse = {
+    ...parsed.data,
     id: generateId(),
-    code: generateWarehouseCode(input.location, data.warehouses.length + 1),
-    name: input.name.trim(),
-    location: input.location.trim(),
-    address: input.address.trim(),
+    code,
     status: "active",
     createdAt: ctx.now,
     updatedAt: ctx.now,
@@ -309,33 +319,54 @@ export function createWarehouse(
 export function updateWarehouse(
   data: DomainData,
   warehouseId: string,
-  input: { name?: string; location?: string; address?: string; status?: Warehouse["status"] },
+  input: WarehousePatch,
   ctx: OperationContext,
 ): DomainResult<DomainData> {
   const warehouse = data.warehouses.find((item) => item.id === warehouseId);
   if (!warehouse) return fail("Warehouse not found");
 
-  if (input.status === "inactive") {
-    const held = data.balances
-      .filter((balance) => balance.warehouseId === warehouseId)
-      .reduce((total, balance) => total + balance.quantity, 0);
-    if (held > 0) return fail("Deactivate blocked: the warehouse still holds stock");
+  if (input.status === "inactive" && warehouse.status === "active") {
+    if (data.balances.some((balance) => balance.warehouseId === warehouseId && balance.quantity > 0)) {
+      return fail("Deactivate blocked: the warehouse still holds stock");
+    }
+    if (data.purchaseOrders.some((order) =>
+      order.warehouseId === warehouseId && order.status !== "received" && order.status !== "cancelled",
+    )) {
+      return fail("Deactivate blocked: resolve the warehouse's open purchase orders first");
+    }
   }
+
+  const parsed = warehouseInputSchema.safeParse({
+    name: input.name ?? warehouse.name,
+    location: input.location ?? warehouse.location,
+    address: input.address ?? warehouse.address,
+    managerName: input.managerName ?? warehouse.managerName,
+    contactNumber: input.contactNumber ?? warehouse.contactNumber,
+    storageCapacity: input.storageCapacity ?? warehouse.storageCapacity,
+  });
+  if (!parsed.success) return fail(parsed.error.issues[0].message);
+  const updated: Warehouse = {
+    ...warehouse,
+    ...parsed.data,
+    status: input.status ?? warehouse.status,
+    updatedAt: ctx.now,
+  };
 
   return succeed({
     ...data,
     warehouses: data.warehouses.map((item) =>
-      item.id === warehouseId
-        ? {
-            ...item,
-            name: input.name?.trim() ?? item.name,
-            location: input.location?.trim() ?? item.location,
-            address: input.address?.trim() ?? item.address,
-            status: input.status ?? item.status,
-            updatedAt: ctx.now,
-          }
-        : item,
+      item.id === warehouseId ? updated : item,
     ),
+    activityLogs: appendActivity(data, {
+      action: updated.status === warehouse.status
+        ? "Warehouse updated"
+        : updated.status === "active" ? "Warehouse activated" : "Warehouse deactivated",
+      entityType: "warehouse",
+      entityId: warehouseId,
+      description: `${updated.code} ${updated.name} (${updated.status}).`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
   });
 }
 

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Suspense } from "react";
 
 import { NAV_GROUPS, type NavItem } from "@/constants/navigation";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,11 @@ function isActivePath(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function SidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
+export function SidebarNav(props: SidebarNavProps) {
+  return <Suspense fallback={null}><PathAwareSidebarNav {...props} /></Suspense>;
+}
+
+function PathAwareSidebarNav({ collapsed = false, onNavigate }: SidebarNavProps) {
   const pathname = usePathname();
 
   return (

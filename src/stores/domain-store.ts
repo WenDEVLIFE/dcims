@@ -54,14 +54,10 @@ interface DomainStore extends DomainData {
     input: Partial<catalog.CategoryInput>,
   ) => DomainResult<void>;
   archiveCategory: (id: string) => DomainResult<void>;
-  createWarehouse: (input: {
-    name: string;
-    location: string;
-    address: string;
-  }) => DomainResult<void>;
+  createWarehouse: (input: catalog.WarehouseInput) => DomainResult<void>;
   updateWarehouse: (
     id: string,
-    input: { name?: string; location?: string; address?: string; status?: "active" | "inactive" },
+    input: catalog.WarehousePatch,
   ) => DomainResult<void>;
   createProject: (input: catalog.ProjectInput) => DomainResult<void>;
   updateProject: (

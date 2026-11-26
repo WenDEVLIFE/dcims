@@ -97,6 +97,9 @@ export interface Warehouse {
   /** Area within Davao City, e.g. Matina. */
   location: string;
   address: string;
+  managerName?: string;
+  contactNumber?: string;
+  storageCapacity?: string;
   status: WarehouseStatus;
   createdAt: ISOTimestamp;
   updatedAt: ISOTimestamp;

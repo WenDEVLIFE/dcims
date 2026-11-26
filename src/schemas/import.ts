@@ -34,7 +34,10 @@ export const demoDataSchema = z.object({
   exportedAt: timestampSchema,
   categories: z.array(categorySchema),
   materials: z.array(materialSchema),
-  warehouses: z.array(warehouseSchema),
+  warehouses: z.array(warehouseSchema).refine(
+    (warehouses) => new Set(warehouses.map((warehouse) => warehouse.code.trim().toUpperCase())).size === warehouses.length,
+    "Warehouse codes must be unique",
+  ),
   stockMovements: z.array(stockMovementSchema),
   balances: z.array(inventoryBalanceSchema),
   projects: z.array(projectSchema),

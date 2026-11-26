@@ -8,6 +8,7 @@ interface WarehouseSeed {
   name: string;
   location: string;
   address: string;
+  managerName: string;
   createdDay: number;
 }
 
@@ -16,18 +17,21 @@ const SEEDS: WarehouseSeed[] = [
     name: "Central Warehouse",
     location: "Matina",
     address: "Km. 7, Davao-Cotabato Road, Matina, Davao City",
+    managerName: "Mara Villanueva",
     createdDay: 0,
   },
   {
     name: "North Warehouse",
     location: "Buhangin",
     address: "Buhangin Diversion Road, Buhangin, Davao City",
+    managerName: "Ramon Delos Reyes",
     createdDay: 0,
   },
   {
     name: "South Warehouse",
     location: "Toril",
     address: "McArthur Highway, Toril, Davao City",
+    managerName: "Elena Santos",
     createdDay: 1,
   },
 ];
@@ -38,6 +42,7 @@ export const warehouses: Warehouse[] = SEEDS.map((seed, index) => ({
   name: seed.name,
   location: seed.location,
   address: seed.address,
+  managerName: seed.managerName,
   status: "active",
   ...audit(isoAt(seed.createdDay, 8, 0)),
 }));

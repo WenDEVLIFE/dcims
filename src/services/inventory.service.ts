@@ -2,11 +2,13 @@ import type { StockMovement } from "@/types/domain";
 import type { DomainData } from "@/types/state";
 import { fail, succeed, type DomainResult } from "@/lib/result";
 import { generateTransactionReference, generateId, nextSequence } from "@/lib/ids";
-import { calculateWeightedAverageCost } from "@/lib/inventory";
+import { balanceUnitCost, calculateWeightedAverageCost } from "@/lib/inventory";
 import {
   adjustBalance,
+  allocateProjectStock,
   appendActivity,
   appendNotification,
+  balanceFor,
   quantityAt,
   totalCost,
   type OperationContext,
@@ -16,11 +18,32 @@ import {
  * Inventory transactions.
  *
  * Every function validates the whole operation before touching state, so a
- * rejected request leaves the dataset exactly as it was — there is no partial
+ * rejected request leaves the dataset exactly as it was; there is no partial
  * application to unwind.
  */
 
 const YEAR = 2026;
+
+function canValue(quantity: number, cents: number): boolean {
+  return Number.isFinite(quantity) && Number.isSafeInteger(totalCost(quantity, cents));
+}
+
+function resultingCost(
+  balance: ReturnType<typeof balanceFor>,
+  fallback: number,
+  quantity: number,
+  cost: number,
+): number | null {
+  const current = balance?.quantity ?? 0;
+  const next = current + quantity;
+  if (!canValue(next, Math.max(balanceUnitCost(balance, fallback), cost))) return null;
+  return calculateWeightedAverageCost({
+    currentQuantity: current,
+    currentUnitCostCentavos: balanceUnitCost(balance, fallback),
+    incomingQuantity: quantity,
+    incomingUnitCostCentavos: cost,
+  });
+}
 
 function nextMovement(
   data: DomainData,
@@ -58,7 +81,7 @@ export interface StockInInput {
   materialId: string;
   warehouseId: string;
   quantity: number;
-  unitCostCentavos?: number;
+  unitCostCentavos: number;
   reason?: string;
   notes?: string;
 }
@@ -78,19 +101,16 @@ export function recordStockIn(
     return fail("Quantity must be greater than zero");
   }
 
-  const unitCost = input.unitCostCentavos ?? 0;
-  if (!Number.isFinite(unitCost) || unitCost < 0) {
-    return fail("Unit cost must be zero or greater");
+  const unitCost = input.unitCostCentavos;
+  if (!Number.isSafeInteger(unitCost) || unitCost < 0) {
+    return fail("Unit cost must be a non-negative whole number of centavos");
   }
 
   const material = data.materials.find((item) => item.id === input.materialId)!;
-  const currentQuantity = quantityAt(data, input.materialId, input.warehouseId);
-  const nextUnitCost = calculateWeightedAverageCost({
-    currentQuantity,
-    currentUnitCostCentavos: material.unitCostCentavos,
-    incomingQuantity: input.quantity,
-    incomingUnitCostCentavos: unitCost,
-  });
+  const current = balanceFor(data, input.materialId, input.warehouseId);
+  const currentQuantity = current?.quantity ?? 0;
+  const nextUnitCost = resultingCost(current, material.unitCostCentavos, input.quantity, unitCost);
+  if (nextUnitCost === null) return fail("Receipt would exceed supported inventory value");
 
   const balances = adjustBalance(
     data.balances,
@@ -98,6 +118,7 @@ export function recordStockIn(
     input.warehouseId,
     input.quantity,
     ctx.now,
+    nextUnitCost,
   );
 
   const movement = nextMovement(
@@ -119,11 +140,6 @@ export function recordStockIn(
 
   return succeed({
     ...data,
-    materials: data.materials.map((item) =>
-      item.id === material.id
-        ? { ...item, unitCostCentavos: nextUnitCost, updatedAt: ctx.now }
-        : item,
-    ),
     balances,
     stockMovements: [...data.stockMovements, movement],
     activityLogs: appendActivity(data, {
@@ -173,6 +189,14 @@ export function recordStockOut(
   }
 
   const material = data.materials.find((item) => item.id === input.materialId)!;
+  const unitCost = balanceUnitCost(balanceFor(data, input.materialId, input.warehouseId), material.unitCostCentavos);
+  if (!canValue(input.quantity, unitCost)) return fail("Release would exceed supported inventory value");
+  if (input.projectId) {
+    const existing = data.projectMaterials.find((row) => row.projectId === input.projectId && row.materialId === input.materialId);
+    if (!canValue((existing?.quantity ?? 0) + input.quantity, Math.max(unitCost, balanceUnitCost(existing, material.unitCostCentavos)))) {
+      return fail("Release would exceed supported project inventory value");
+    }
+  }
   const movement = nextMovement(
     data,
     {
@@ -181,7 +205,7 @@ export function recordStockOut(
       warehouseId: input.warehouseId,
       projectId: input.projectId,
       quantity: input.quantity,
-      unitCostCentavos: material.unitCostCentavos,
+      unitCostCentavos: unitCost,
       balanceAfter: available - input.quantity,
       reason: input.reason ?? "Stock released",
       notes: input.notes,
@@ -198,11 +222,13 @@ export function recordStockOut(
   );
 
   const projectMaterials = input.projectId
-    ? upsertProjectMaterial(
-        data,
+    ? allocateProjectStock(
+        data.projectMaterials,
         input.projectId,
         input.materialId,
         input.quantity,
+        unitCost,
+        material.unitCostCentavos,
         ctx.now,
       )
     : data.projectMaterials;
@@ -274,6 +300,10 @@ export function transferInventory(
   }
 
   const material = data.materials.find((item) => item.id === input.materialId)!;
+  const sourceCost = balanceUnitCost(balanceFor(data, input.materialId, input.sourceWarehouseId), material.unitCostCentavos);
+  const destinationBalance = balanceFor(data, input.materialId, input.destinationWarehouseId);
+  const destinationCost = resultingCost(destinationBalance, material.unitCostCentavos, input.quantity, sourceCost);
+  if (destinationCost === null) return fail("Transfer would exceed supported inventory value");
   let balances = adjustBalance(
     data.balances,
     input.materialId,
@@ -287,6 +317,7 @@ export function transferInventory(
     input.destinationWarehouseId,
     input.quantity,
     ctx.now,
+    destinationCost,
   );
 
   const movement = nextMovement(
@@ -297,7 +328,7 @@ export function transferInventory(
       warehouseId: input.sourceWarehouseId,
       destinationWarehouseId: input.destinationWarehouseId,
       quantity: input.quantity,
-      unitCostCentavos: material.unitCostCentavos,
+      unitCostCentavos: sourceCost,
       balanceAfter: available - input.quantity,
       reason: "Warehouse transfer",
       notes: input.notes,
@@ -344,6 +375,7 @@ export function recordAdjustment(
   if (warehouseError) return fail(warehouseError);
 
   if (!input.reason.trim()) return fail("An adjustment reason is required");
+  if (input.reason.trim().length > 200) return fail("Adjustment reason must be 200 characters or fewer");
 
   if (!Number.isFinite(input.countedQuantity) || input.countedQuantity < 0) {
     return fail("Counted quantity cannot be negative");
@@ -354,12 +386,15 @@ export function recordAdjustment(
   if (delta === 0) return fail("Counted quantity matches the recorded balance");
 
   const material = data.materials.find((item) => item.id === input.materialId)!;
+  const unitCost = balanceUnitCost(balanceFor(data, input.materialId, input.warehouseId), material.unitCostCentavos);
+  if (!canValue(Math.max(input.countedQuantity, Math.abs(delta)), unitCost)) return fail("Adjustment would exceed supported inventory value");
   const balances = adjustBalance(
     data.balances,
     input.materialId,
     input.warehouseId,
     delta,
     ctx.now,
+    unitCost,
   );
 
   const movement = nextMovement(
@@ -369,9 +404,9 @@ export function recordAdjustment(
       materialId: input.materialId,
       warehouseId: input.warehouseId,
       quantity: Math.abs(delta),
-      unitCostCentavos: material.unitCostCentavos,
+      unitCostCentavos: unitCost,
       balanceAfter: input.countedQuantity,
-      reason: input.reason,
+      reason: input.reason.trim(),
       notes: delta > 0 ? "Increase from cycle count" : "Decrease from cycle count",
     },
     ctx,
@@ -415,6 +450,7 @@ export function recordReturn(
     return fail("Quantity must be greater than zero");
   }
 
+  if (!data.projects.some((project) => project.id === input.projectId)) return fail("Project not found");
   const allocation = data.projectMaterials.find(
     (entry) =>
       entry.projectId === input.projectId && entry.materialId === input.materialId,
@@ -428,12 +464,17 @@ export function recordReturn(
   }
 
   const material = data.materials.find((item) => item.id === input.materialId)!;
+  const unitCost = balanceUnitCost(allocation, material.unitCostCentavos);
+  const destinationBalance = balanceFor(data, input.materialId, input.warehouseId);
+  const destinationCost = resultingCost(destinationBalance, material.unitCostCentavos, input.quantity, unitCost);
+  if (destinationCost === null) return fail("Return would exceed supported inventory value");
   const balances = adjustBalance(
     data.balances,
     input.materialId,
     input.warehouseId,
     input.quantity,
     ctx.now,
+    destinationCost,
   );
 
   const projectMaterials = data.projectMaterials
@@ -441,8 +482,7 @@ export function recordReturn(
       entry.id === allocation.id
         ? { ...entry, quantity: entry.quantity - input.quantity, updatedAt: ctx.now }
         : entry,
-    )
-    .filter((entry) => entry.quantity > 0);
+    );
 
   const current = quantityAt(data, input.materialId, input.warehouseId);
   const movement = nextMovement(
@@ -453,7 +493,7 @@ export function recordReturn(
       warehouseId: input.warehouseId,
       projectId: input.projectId,
       quantity: input.quantity,
-      unitCostCentavos: material.unitCostCentavos,
+      unitCostCentavos: unitCost,
       balanceAfter: current + input.quantity,
       reason: "Material returned from site",
       notes: input.notes,
@@ -513,6 +553,7 @@ export function recordMaterialConsumption(
 
   const material = data.materials.find((entry) => entry.id === input.materialId);
   if (!material) return fail("Material not found");
+  const unitCost = balanceUnitCost(allocation, material.unitCostCentavos);
 
   const projectMaterials = data.projectMaterials.map((entry) =>
     entry.id === allocation.id
@@ -530,8 +571,8 @@ export function recordMaterialConsumption(
     projectId: input.projectId,
     materialId: input.materialId,
     quantity: input.quantity,
-    unitCostCentavos: material.unitCostCentavos,
-    totalCostCentavos: totalCost(input.quantity, material.unitCostCentavos),
+    unitCostCentavos: unitCost,
+    totalCostCentavos: totalCost(input.quantity, unitCost),
     reference: `CONS-${project.code}`,
     consumedAt: ctx.now,
   };
@@ -549,36 +590,4 @@ export function recordMaterialConsumption(
       actor: ctx.actor,
     }),
   });
-}
-
-/** Adds on-site quantity for a project, creating the allocation if needed. */function upsertProjectMaterial(
-  data: DomainData,
-  projectId: string,
-  materialId: string,
-  quantity: number,
-  now: string,
-) {
-  const existing = data.projectMaterials.find(
-    (entry) => entry.projectId === projectId && entry.materialId === materialId,
-  );
-
-  if (!existing) {
-    return [
-      ...data.projectMaterials,
-      {
-        id: `pm-${projectId}-${materialId}`,
-        projectId,
-        materialId,
-        quantity,
-        consumedQuantity: 0,
-        updatedAt: now,
-      },
-    ];
-  }
-
-  return data.projectMaterials.map((entry) =>
-    entry.id === existing.id
-      ? { ...entry, quantity: entry.quantity + quantity, updatedAt: now }
-      : entry,
-  );
 }

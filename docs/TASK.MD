@@ -858,87 +858,96 @@ Priority: P0
 
 ### Transaction Page
 
-- [ ] Create stock movement page.
-- [ ] Create transaction summary cards.
-- [ ] Create transaction history table.
-- [ ] Display transaction reference numbers.
-- [ ] Display transaction types.
-- [ ] Display material names.
-- [ ] Display transaction quantities.
-- [ ] Display source and destination warehouses.
-- [ ] Display transaction timestamps.
-- [ ] Display transaction remarks.
+- [x] Create stock movement page.
+- [x] Create transaction summary cards.
+- [x] Create transaction history table.
+- [x] Display transaction reference numbers.
+- [x] Display transaction types.
+- [x] Display material names.
+- [x] Display transaction quantities.
+- [x] Display source and destination warehouses.
+- [x] Display transaction timestamps.
+- [x] Display transaction remarks.
 
 ### Stock-In
 
-- [ ] Create stock-in form.
-- [ ] Select material.
-- [ ] Select destination warehouse.
-- [ ] Enter received quantity.
-- [ ] Enter received unit cost.
-- [ ] Calculate new inventory balance.
-- [ ] Calculate weighted-average unit cost.
-- [ ] Generate transaction record.
-- [ ] Generate activity log.
+- [x] Create stock-in form.
+- [x] Select material.
+- [x] Select destination warehouse.
+- [x] Enter received quantity.
+- [x] Enter received unit cost.
+- [x] Calculate new inventory balance.
+- [x] Calculate weighted-average unit cost.
+- [x] Generate transaction record.
+- [x] Generate activity log.
 
 ### Stock-Out
 
-- [ ] Create stock-out form.
-- [ ] Select material.
-- [ ] Select source warehouse.
-- [ ] Enter released quantity.
-- [ ] Select project when applicable.
-- [ ] Validate available stock.
-- [ ] Deduct inventory quantity.
-- [ ] Record transaction cost snapshot.
-- [ ] Update project inventory when applicable.
-- [ ] Generate transaction record.
-- [ ] Generate activity log.
+- [x] Create stock-out form.
+- [x] Select material.
+- [x] Select source warehouse.
+- [x] Enter released quantity.
+- [x] Select project when applicable.
+- [x] Validate available stock.
+- [x] Deduct inventory quantity.
+- [x] Record transaction cost snapshot.
+- [x] Update project inventory when applicable.
+- [x] Generate transaction record.
+- [x] Generate activity log.
 
 ### Warehouse Transfer
 
-- [ ] Create warehouse transfer form.
-- [ ] Select source warehouse.
-- [ ] Select destination warehouse.
-- [ ] Select material.
-- [ ] Enter transfer quantity.
-- [ ] Validate source stock.
-- [ ] Prevent identical source and destination.
-- [ ] Deduct source inventory.
-- [ ] Increase destination inventory.
-- [ ] Recalculate destination average unit cost.
-- [ ] Generate transfer transaction.
-- [ ] Generate activity log.
+- [x] Create warehouse transfer form.
+- [x] Select source warehouse.
+- [x] Select destination warehouse.
+- [x] Select material.
+- [x] Enter transfer quantity.
+- [x] Validate source stock.
+- [x] Prevent identical source and destination.
+- [x] Deduct source inventory.
+- [x] Increase destination inventory.
+- [x] Recalculate destination average unit cost.
+- [x] Generate transfer transaction.
+- [x] Generate activity log.
 
 ### Stock Adjustment
 
-- [ ] Create stock adjustment form.
-- [ ] Select adjustment type.
-- [ ] Enter adjustment quantity.
-- [ ] Require adjustment reason.
-- [ ] Validate resulting inventory balance.
-- [ ] Record adjustment transaction.
+- [x] Create stock adjustment form.
+- [x] Select adjustment type.
+- [x] Enter adjustment quantity.
+- [x] Require adjustment reason.
+- [x] Validate resulting inventory balance.
+- [x] Record adjustment transaction.
 
 ### Material Return
 
-- [ ] Select source project.
-- [ ] Select returned material.
-- [ ] Select destination warehouse.
-- [ ] Validate available project quantity.
-- [ ] Deduct project inventory.
-- [ ] Increase warehouse inventory.
-- [ ] Preserve appropriate material cost information.
-- [ ] Generate return transaction.
+- [x] Select source project.
+- [x] Select returned material.
+- [x] Select destination warehouse.
+- [x] Validate available project quantity.
+- [x] Deduct project inventory.
+- [x] Increase warehouse inventory.
+- [x] Preserve appropriate material cost information.
+- [x] Generate return transaction.
 
 ### Transaction Filters
 
-- [ ] Search transaction reference.
-- [ ] Filter by transaction type.
-- [ ] Filter by warehouse.
-- [ ] Filter by material.
-- [ ] Filter by project.
-- [ ] Filter by date range.
-- [ ] Implement CSV export.
+- [x] Search transaction reference.
+- [x] Filter by transaction type.
+- [x] Filter by warehouse.
+- [x] Filter by material.
+- [x] Filter by project.
+- [x] Filter by date range.
+- [x] Implement CSV export.
+
+Implementation notes:
+
+- Warehouse balances and on-site project allocations hold their own weighted
+  costs. Version 1 snapshots inherit the existing material cost on migration,
+  without rewriting historical movement prices.
+- Transfers use the source warehouse's carrying cost and reweight only the
+  destination. Project returns use the on-site cost; completed transactions
+  remain immutable. Record damaged stock as a decrease with a reason.
 
 ### Acceptance Criteria
 
@@ -1983,7 +1992,7 @@ Update this section after each completed phase.
 | 09 | Materials Management | P0 | Completed |
 | 10 | Categories Management | P1 | Completed |
 | 11 | Warehouse Management | P0 | Completed |
-| 12 | Stock Movements | P0 | Pending |
+| 12 | Stock Movements | P0 | Completed |
 | 13 | Construction Projects | P1 | Pending |
 | 14 | Material Requests | P1 | Pending |
 | 15 | Equipment Management | P1 | Pending |

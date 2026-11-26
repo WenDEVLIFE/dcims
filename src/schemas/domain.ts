@@ -94,10 +94,14 @@ export const warehouseSchema = warehouseInputSchema.extend({
 });
 
 export const warehouseTransferInputSchema = z.object({
+  sourceWarehouseId: z.string().min(1, "Choose a source warehouse"),
   materialId: z.string().min(1, "Choose a material"),
   destinationWarehouseId: z.string().min(1, "Choose a destination warehouse"),
   quantity: z.number().positive("Enter a quantity greater than zero"),
   notes: z.string().trim().max(300).optional(),
+}).refine((input) => input.sourceWarehouseId !== input.destinationWarehouseId, {
+  path: ["destinationWarehouseId"],
+  message: "Source and destination warehouses must differ",
 });
 
 export type WarehouseTransferValues = z.infer<typeof warehouseTransferInputSchema>;
@@ -278,6 +282,7 @@ export const projectMaterialSchema = z.object({
   projectId: idSchema,
   materialId: idSchema,
   quantity: nonNegativeQuantitySchema,
+  unitCostCentavos: centavosSchema.optional(),
   consumedQuantity: nonNegativeQuantitySchema,
   updatedAt: timestampSchema,
 });
@@ -287,6 +292,7 @@ export const inventoryBalanceSchema = z.object({
   materialId: idSchema,
   warehouseId: idSchema,
   quantity: nonNegativeQuantitySchema,
+  unitCostCentavos: centavosSchema.optional(),
   updatedAt: timestampSchema,
 });
 

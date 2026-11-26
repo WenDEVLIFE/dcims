@@ -1,6 +1,6 @@
 import type { Centavos } from "@/types/domain";
 import type { DomainData } from "@/types/state";
-import { calculateInventoryValue } from "@/lib/inventory";
+import { balanceUnitCost, calculateInventoryValue } from "@/lib/inventory";
 
 /**
  * Derived selectors. Every dashboard figure comes from these functions, so a
@@ -35,7 +35,7 @@ export function inventoryValue(state: DomainData): Centavos {
     return [
       {
         quantity: balance.quantity,
-        unitCostCentavos: material.unitCostCentavos,
+        unitCostCentavos: balanceUnitCost(balance, material.unitCostCentavos),
       },
     ];
   });
@@ -162,7 +162,7 @@ export function categoryInventoryValues(
   for (const balance of state.balances) {
     const material = materials.get(balance.materialId);
     if (!material) continue;
-    const value = Math.round(balance.quantity * material.unitCostCentavos);
+    const value = Math.round(balance.quantity * balanceUnitCost(balance, material.unitCostCentavos));
     totals.set(material.categoryId, (totals.get(material.categoryId) ?? 0) + value);
   }
 
@@ -192,7 +192,7 @@ export function warehouseInventoryById(state: Pick<DomainData, "balances" | "mat
   for (const balance of state.balances) {
     const material = materials.get(balance.materialId);
     if (!material) continue;
-    const value = Math.round(balance.quantity * material.unitCostCentavos);
+    const value = Math.round(balance.quantity * balanceUnitCost(balance, material.unitCostCentavos));
     const summary = summaries.get(balance.warehouseId) ?? { rows: [], value: 0 };
     summary.rows.push({ balance, material, value });
     summary.value += value;

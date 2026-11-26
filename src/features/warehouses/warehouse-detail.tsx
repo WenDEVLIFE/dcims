@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { WarehouseFormDialog } from "@/features/warehouses/warehouse-form-dialog";
 import { WarehouseTransferDialog } from "@/features/warehouses/warehouse-transfer-dialog";
 import { formatCentavos } from "@/lib/currency";
+import { balanceUnitCost } from "@/lib/inventory";
 import { formatDate, formatDateTime, formatNumber, unitLabel } from "@/lib/format";
 import { useDomainStore } from "@/stores/domain-store";
 import { warehouseInventoryById, type WarehouseInventoryRow } from "@/stores/selectors";
@@ -46,7 +47,7 @@ const inventoryColumns: DataTableColumn<WarehouseInventoryRow>[] = [
     ),
   },
   { id: "quantity", header: "On hand", align: "right", className: "whitespace-nowrap", sortValue: ({ balance }) => balance.quantity, cell: ({ balance, material }) => `${formatNumber(balance.quantity)} ${unitLabel(material.unit)}` },
-  { id: "unit-value", header: "Avg. unit cost", align: "right", className: "whitespace-nowrap", cell: ({ material }) => formatCentavos(material.unitCostCentavos) },
+  { id: "unit-value", header: "Avg. unit cost", align: "right", className: "whitespace-nowrap", cell: ({ material, balance }) => formatCentavos(balanceUnitCost(balance, material.unitCostCentavos)) },
   { id: "value", header: "Inventory value", align: "right", className: "whitespace-nowrap", sortValue: (row) => row.value, cell: (row) => formatCentavos(row.value) },
 ];
 
@@ -170,8 +171,8 @@ export function WarehouseDetail({ warehouseId }: { warehouseId: string }) {
         }} />
       )}
       {dialog === "transfer" && (
-        <WarehouseTransferDialog source={warehouse} stock={stock} destinations={destinations} onClose={() => setDialog(null)} onTransfer={(values) => {
-          const result = transferInventory({ ...values, sourceWarehouseId: warehouseId });
+        <WarehouseTransferDialog source={warehouse} stock={stock} warehouses={destinations} onClose={() => setDialog(null)} onTransfer={(values) => {
+          const result = transferInventory(values);
           if (result.ok) toast.success("Stock transferred");
           return result;
         }} />

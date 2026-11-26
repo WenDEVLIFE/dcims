@@ -25,7 +25,7 @@ import type { StockStatus, Material } from "@/types/domain";
 import { buildCsv, downloadCsv } from "@/lib/csv";
 import { formatCentavos } from "@/lib/currency";
 import { formatNumber, unitLabel } from "@/lib/format";
-import { resolveStockStatus } from "@/lib/inventory";
+import { resolveStockStatus, summariseMaterialInventory } from "@/lib/inventory";
 import { useDomainStore } from "@/stores/domain-store";
 
 const PAGE_SIZE = 10;
@@ -34,6 +34,8 @@ interface MaterialRow {
   material: Material;
   categoryName: string;
   quantity: number;
+  value: number;
+  averageCost: number;
   stockStatus: StockStatus;
 }
 
@@ -60,17 +62,18 @@ export function MaterialsContent() {
 
   const rows = useMemo<MaterialRow[]>(() => {
     return state.materials.map((material) => {
-      const quantity = state.balances
-        .filter((balance) => balance.materialId === material.id)
-        .reduce((total, balance) => total + balance.quantity, 0);
+      const summary = summariseMaterialInventory(
+        state.balances.filter((balance) => balance.materialId === material.id),
+        material.unitCostCentavos,
+      );
 
       return {
         material,
         categoryName:
           state.categories.find((category) => category.id === material.categoryId)
             ?.name ?? "Uncategorised",
-        quantity,
-        stockStatus: resolveStockStatus(quantity, material.reorderPoint),
+        ...summary,
+        stockStatus: resolveStockStatus(summary.quantity, material.reorderPoint),
       };
     });
   }, [state.materials, state.balances, state.categories]);
@@ -110,7 +113,7 @@ export function MaterialsContent() {
 
   const summary = useMemo(() => {
     const value = rows.reduce(
-      (total, row) => total + Math.round(row.quantity * row.material.unitCostCentavos),
+      (total, row) => total + row.value,
       0,
     );
     return {
@@ -167,7 +170,7 @@ export function MaterialsContent() {
         row.categoryName,
         unitLabel(row.material.unit),
         row.quantity,
-        (row.material.unitCostCentavos / 100).toFixed(2),
+        (row.averageCost / 100).toFixed(2),
         row.stockStatus,
       ]),
     );
@@ -212,9 +215,9 @@ export function MaterialsContent() {
       id: "cost",
       header: "Avg cost",
       align: "right",
-      sortValue: (row) => row.material.unitCostCentavos,
+      sortValue: (row) => row.averageCost,
       cell: (row) => (
-        <span className="tabular-nums">{formatCentavos(row.material.unitCostCentavos)}</span>
+        <span className="tabular-nums">{formatCentavos(row.averageCost)}</span>
       ),
     },
     {

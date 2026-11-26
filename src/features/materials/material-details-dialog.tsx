@@ -12,6 +12,7 @@ import {
 import type { InventoryBalance, Material, StockMovement, Warehouse } from "@/types/domain";
 import { formatCentavos } from "@/lib/currency";
 import { formatQuantity, formatDateTime, unitLabel } from "@/lib/format";
+import { balanceUnitCost, summariseMaterialInventory } from "@/lib/inventory";
 
 interface MaterialDetailsDialogProps {
   open: boolean;
@@ -32,15 +33,15 @@ export function MaterialDetailsDialog({
 }: MaterialDetailsDialogProps) {
   if (!material) return null;
 
-  const totalQuantity = balances
-    .filter((balance) => balance.materialId === material.id)
-    .reduce((total, balance) => total + balance.quantity, 0);
+  const stock = balances.filter((balance) => balance.materialId === material.id);
+  const { quantity: totalQuantity, averageCost } = summariseMaterialInventory(stock, material.unitCostCentavos);
 
-  const byWarehouse = balances
-    .filter((balance) => balance.materialId === material.id)
+  const byWarehouse = stock
     .map((balance) => ({
+      id: balance.id,
       warehouse: warehouses.find((item) => item.id === balance.warehouseId),
       quantity: balance.quantity,
+      cost: balanceUnitCost(balance, material.unitCostCentavos),
     }))
     .sort((left, right) => right.quantity - left.quantity);
 
@@ -73,7 +74,7 @@ export function MaterialDetailsDialog({
             { label: "Measurement unit", value: unitLabel(material.unit) },
             {
               label: "Average unit cost",
-              value: formatCentavos(material.unitCostCentavos),
+              value: formatCentavos(averageCost),
             },
             { label: "Reorder point", value: formatQuantity(material.reorderPoint, material.unit) },
             {
@@ -91,14 +92,15 @@ export function MaterialDetailsDialog({
             </p>
           ) : (
             <ul className="mt-2 divide-y divide-border rounded-md border border-border">
-              {byWarehouse.map(({ warehouse, quantity }) => (
+              {byWarehouse.map(({ id, warehouse, quantity, cost }) => (
                 <li
-                  key={warehouse?.id ?? quantity}
+                  key={id}
                   className="flex items-center justify-between px-3 py-2 text-sm"
                 >
                   <span>{warehouse?.name ?? "Unknown warehouse"}</span>
                   <span className="tabular-nums">
                     {formatQuantity(quantity, material.unit)}
+                    <span className="block text-xs text-muted-foreground">{formatCentavos(cost)} per unit</span>
                   </span>
                 </li>
               ))}

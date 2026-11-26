@@ -54,8 +54,8 @@ export function createPurchaseOrder(
     if (!Number.isFinite(line.orderedQuantity) || line.orderedQuantity <= 0) {
       return fail(`Ordered quantity for ${material.name} must be greater than zero`);
     }
-    if (!Number.isFinite(line.unitCostCentavos) || line.unitCostCentavos < 0) {
-      return fail(`Unit cost for ${material.name} must be zero or greater`);
+    if (!Number.isSafeInteger(line.unitCostCentavos) || line.unitCostCentavos < 0) {
+      return fail(`Unit cost for ${material.name} must be a non-negative whole number of centavos`);
     }
 
     items.push({

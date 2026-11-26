@@ -1,4 +1,36 @@
-import type { Centavos, StockStatus } from "@/types/domain";
+import type { Centavos, InventoryBalance, StockStatus } from "@/types/domain";
+import type { DomainData } from "@/types/state";
+
+/** Legacy balances inherit the catalogue cost until normalized. */
+export function balanceUnitCost(
+  balance: { unitCostCentavos?: Centavos } | undefined,
+  fallback: Centavos,
+): Centavos {
+  return balance?.unitCostCentavos ?? fallback;
+}
+
+/** Preserve legacy valuation while creating independent warehouse and project costs. */
+export function normalizeInventoryCosts(data: DomainData): Pick<DomainData, "balances" | "projectMaterials"> {
+  const costs = new Map(data.materials.map((material) => [material.id, material.unitCostCentavos]));
+  const normalize = <T extends { materialId: string; unitCostCentavos?: Centavos }>(balance: T): T =>
+    balance.unitCostCentavos === undefined
+      ? { ...balance, unitCostCentavos: costs.get(balance.materialId) ?? 0 }
+      : balance;
+  return {
+    balances: data.balances.map(normalize),
+    projectMaterials: data.projectMaterials.map(normalize),
+  };
+}
+
+export function summariseMaterialInventory(balances: InventoryBalance[], fallback: Centavos) {
+  let quantity = 0;
+  let value = 0;
+  for (const balance of balances) {
+    quantity += balance.quantity;
+    value += Math.round(balance.quantity * balanceUnitCost(balance, fallback));
+  }
+  return { quantity, value, averageCost: quantity > 0 ? Math.round(value / quantity) : fallback };
+}
 
 /**
  * Inventory arithmetic. Every monetary result is integer centavos, and every

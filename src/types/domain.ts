@@ -110,6 +110,8 @@ export interface InventoryBalance {
   materialId: ID;
   warehouseId: ID;
   quantity: number;
+  /** Warehouse weighted-average cost; older snapshots omit it. */
+  unitCostCentavos?: Centavos;
   updatedAt: ISOTimestamp;
 }
 
@@ -172,6 +174,8 @@ export interface ProjectMaterial {
   materialId: ID;
   /** Quantity currently held on site. */
   quantity: number;
+  /** Average cost of inventory currently held at the project. */
+  unitCostCentavos?: Centavos;
   /** Cumulative quantity consumed by the project. */
   consumedQuantity: number;
   updatedAt: ISOTimestamp;

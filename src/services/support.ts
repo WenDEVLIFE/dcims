@@ -7,6 +7,7 @@ import type {
 } from "@/types/domain";
 import type { DomainData } from "@/types/state";
 import { generateId } from "@/lib/ids";
+import { balanceUnitCost, calculateWeightedAverageCost } from "@/lib/inventory";
 
 /**
  * Shared plumbing for domain services. Every helper returns new objects —
@@ -45,6 +46,7 @@ export function adjustBalance(
   warehouseId: string,
   delta: number,
   now: string,
+  unitCostCentavos?: Centavos,
 ): InventoryBalance[] {
   const index = balances.findIndex(
     (balance) =>
@@ -60,6 +62,7 @@ export function adjustBalance(
         materialId,
         warehouseId,
         quantity: delta,
+        unitCostCentavos,
         updatedAt: now,
       },
     ];
@@ -72,9 +75,39 @@ export function adjustBalance(
 
   return balances.map((balance, position) =>
     position === index
-      ? { ...balance, quantity: nextQuantity, updatedAt: now }
+      ? { ...balance, quantity: nextQuantity, unitCostCentavos: unitCostCentavos ?? balance.unitCostCentavos, updatedAt: now }
       : balance,
   );
+}
+
+/** Adds stock at its carrying cost without rewriting consumption history. */
+export function allocateProjectStock(
+  allocations: DomainData["projectMaterials"],
+  projectId: string,
+  materialId: string,
+  quantity: number,
+  unitCostCentavos: Centavos,
+  fallbackCost: Centavos,
+  now: string,
+): DomainData["projectMaterials"] {
+  const existing = allocations.find((item) => item.projectId === projectId && item.materialId === materialId);
+  if (!existing) return [...allocations, {
+    id: `pm-${projectId}-${materialId}`,
+    projectId, materialId, quantity, unitCostCentavos, consumedQuantity: 0, updatedAt: now,
+  }];
+
+  const updated = {
+    ...existing,
+    quantity: existing.quantity + quantity,
+    unitCostCentavos: calculateWeightedAverageCost({
+      currentQuantity: existing.quantity,
+      currentUnitCostCentavos: balanceUnitCost(existing, fallbackCost),
+      incomingQuantity: quantity,
+      incomingUnitCostCentavos: unitCostCentavos,
+    }),
+    updatedAt: now,
+  };
+  return allocations.map((item) => item.id === existing.id ? updated : item);
 }
 
 export function appendActivity(

@@ -47,7 +47,7 @@ export function createMaterial(
   const category = data.categories.find((item) => item.id === input.categoryId);
   if (!category) return fail("Category not found");
   if (category.status === "archived") return fail("Choose an active category");
-  if (!Number.isFinite(input.unitCostCentavos) || input.unitCostCentavos < 0) {
+  if (!Number.isSafeInteger(input.unitCostCentavos) || input.unitCostCentavos < 0) {
     return fail("Unit cost must be zero or greater");
   }
   if (!Number.isFinite(input.reorderPoint) || input.reorderPoint < 0) {
@@ -104,7 +104,7 @@ export function updateMaterial(
   }
   if (
     patch.unitCostCentavos !== undefined &&
-    (!Number.isFinite(patch.unitCostCentavos) || patch.unitCostCentavos < 0)
+    (!Number.isSafeInteger(patch.unitCostCentavos) || patch.unitCostCentavos < 0)
   ) {
     return fail("Unit cost must be zero or greater");
   }

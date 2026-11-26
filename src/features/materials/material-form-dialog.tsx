@@ -88,7 +88,7 @@ export function MaterialFormDialog({
           <DialogTitle>{material ? "Edit material" : "Add material"}</DialogTitle>
           <DialogDescription>
             {material
-              ? `Update ${material.sku}. Cost changes affect future transactions, not history.`
+              ? `Update ${material.sku}. Catalogue cost changes do not revalue existing stock.`
               : "New materials start with zero stock in every warehouse."}
           </DialogDescription>
         </DialogHeader>
@@ -162,7 +162,7 @@ export function MaterialFormDialog({
             </FormField>
 
             <FormField
-              label="Unit cost"
+              label="Catalogue unit cost"
               required
               error={errors.unitCostCentavos?.message}
             >
@@ -171,7 +171,7 @@ export function MaterialFormDialog({
                 name="unitCostCentavos"
                 render={({ field }) => (
                   <CurrencyInput
-                    label="Unit cost"
+                    label="Catalogue unit cost"
                     value={field.value}
                     onValueChange={(centavos) => field.onChange(centavos ?? 0)}
                   />

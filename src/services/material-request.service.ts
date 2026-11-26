@@ -1,10 +1,13 @@
 import type { MaterialRequest, MaterialRequestItem } from "@/types/domain";
 import type { DomainData } from "@/types/state";
 import { fail, succeed, type DomainResult } from "@/lib/result";
+import { balanceUnitCost } from "@/lib/inventory";
 import { generateId, generateMaterialRequestNumber, nextSequence } from "@/lib/ids";
 import { generateTransactionReference } from "@/lib/ids";
 import {
   adjustBalance,
+  allocateProjectStock,
+  balanceFor,
   appendActivity,
   quantityAt,
   totalCost,
@@ -200,45 +203,18 @@ export function fulfillMaterialRequest(
     const material = data.materials.find((entry) => entry.id === item.materialId);
     if (!material) return fail("A requested material no longer exists");
 
-    const available = quantityAt(
-      { ...data, balances },
-      item.materialId,
-      input.warehouseId,
-    );
+    const warehouseBalance = balanceFor({ ...data, balances }, item.materialId, input.warehouseId);
+    const available = warehouseBalance?.quantity ?? 0;
     const requested = input.quantities?.[item.id] ?? outstanding;
     const release = Math.min(outstanding, available, Math.max(0, requested));
     if (release <= 0) continue;
 
-    balances = adjustBalance(
-      balances,
-      item.materialId,
-      input.warehouseId,
-      -release,
-      ctx.now,
+    const unitCost = balanceUnitCost(warehouseBalance, material.unitCostCentavos);
+    balances = adjustBalance(balances, item.materialId, input.warehouseId, -release, ctx.now);
+    projectMaterials = allocateProjectStock(
+      projectMaterials, request.projectId, item.materialId, release,
+      unitCost, material.unitCostCentavos, ctx.now,
     );
-
-    const existingAllocation = projectMaterials.find(
-      (entry) =>
-        entry.projectId === request.projectId &&
-        entry.materialId === item.materialId,
-    );
-    projectMaterials = existingAllocation
-      ? projectMaterials.map((entry) =>
-          entry.id === existingAllocation.id
-            ? { ...entry, quantity: entry.quantity + release, updatedAt: ctx.now }
-            : entry,
-        )
-      : [
-          ...projectMaterials,
-          {
-            id: `pm-${request.projectId}-${item.materialId}`,
-            projectId: request.projectId,
-            materialId: item.materialId,
-            quantity: release,
-            consumedQuantity: 0,
-            updatedAt: ctx.now,
-          },
-        ];
 
     const sequence = nextSequence([
       ...data.stockMovements.map((movement) => movement.reference),
@@ -253,8 +229,8 @@ export function fulfillMaterialRequest(
       warehouseId: input.warehouseId,
       projectId: request.projectId,
       quantity: release,
-      unitCostCentavos: item.unitCostCentavos,
-      totalCostCentavos: totalCost(release, item.unitCostCentavos),
+      unitCostCentavos: unitCost,
+      totalCostCentavos: totalCost(release, unitCost),
       // Balances are already updated, so this is the post-deduction figure.
       balanceAfter: quantityAt(
         { ...data, balances },

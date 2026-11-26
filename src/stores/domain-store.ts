@@ -14,6 +14,7 @@ import type {
   MaterialUnit,
 } from "@/types/domain";
 import { fail, succeed, type DomainResult } from "@/lib/result";
+import { normalizeInventoryCosts } from "@/lib/inventory";
 import { initialDemoData } from "@/data/seed";
 import * as catalog from "@/services/catalog.service";
 import * as inventoryService from "@/services/inventory.service";
@@ -23,13 +24,13 @@ import * as equipmentService from "@/services/equipment.service";
 import type { OperationContext } from "@/services/support";
 
 const STORE_NAME = "dcims-domain-v1";
-const STORE_VERSION = 1;
+const STORE_VERSION = 2;
 
 function toDomainData(source: DemoData): DomainData {
   const { version: _version, exportedAt: _exportedAt, ...rest } = source;
   void _version;
   void _exportedAt;
-  return structuredClone(rest);
+  return structuredClone({ ...rest, ...normalizeInventoryCosts(rest) });
 }
 
 function seedState(): DomainData {
@@ -154,7 +155,7 @@ export const useDomainStore = create<DomainStore>()(
             set({ ...seedState(), hydrated: true, recovered: true });
             return;
           }
-          set({ hydrated: true });
+          set({ ...normalizeInventoryCosts(parsed.data), hydrated: true });
         },
         clearRecovered: () => set({ recovered: false }),
 
@@ -272,9 +273,8 @@ export const useDomainStore = create<DomainStore>()(
         return domain as DomainData;
       },
       migrate: (persisted, version) => {
-        // Only one schema version exists; anything older is rebuilt from seed
-        // rather than guessed at, which keeps demo data trustworthy.
-        if (version < STORE_VERSION) return seedState() as DomainStore;
+        // Version 1 lacks balance costs; backfill after validating the old data.
+        if (version < 1) return seedState() as DomainStore;
         return persisted as DomainStore;
       },
       onRehydrateStorage: () => (state) => {

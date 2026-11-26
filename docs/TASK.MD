@@ -461,36 +461,36 @@ Priority: P0
 
 ### Seed Data Requirements
 
-- [ ] Create at least 50 construction materials.
-- [ ] Create at least 10 material categories.
-- [ ] Create 3 fictional warehouses.
-- [ ] Create 6 fictional construction projects.
-- [ ] Create at least 12 fictional suppliers.
-- [ ] Create at least 20 equipment records.
-- [ ] Create at least 40 stock movement records.
-- [ ] Create at least 15 material requests.
-- [ ] Create at least 10 purchase orders.
-- [ ] Create at least 30 activity records.
-- [ ] Create sample equipment assignments.
-- [ ] Create sample maintenance records.
-- [ ] Create sample notifications.
-- [ ] Create fictional company profile.
-- [ ] Create fictional demo user profile.
+- [x] Create at least 50 construction materials.
+- [x] Create at least 10 material categories.
+- [x] Create 3 fictional warehouses.
+- [x] Create 6 fictional construction projects.
+- [x] Create at least 12 fictional suppliers.
+- [x] Create at least 20 equipment records.
+- [x] Create at least 40 stock movement records.
+- [x] Create at least 15 material requests.
+- [x] Create at least 10 purchase orders.
+- [x] Create at least 30 activity records.
+- [x] Create sample equipment assignments.
+- [x] Create sample maintenance records.
+- [x] Create sample notifications.
+- [x] Create fictional company profile.
+- [x] Create fictional demo user profile.
 
 ### Warehouse Seed Data
 
-- [ ] Central Warehouse — Matina.
-- [ ] North Warehouse — Buhangin.
-- [ ] South Warehouse — Toril.
+- [x] Central Warehouse — Matina.
+- [x] North Warehouse — Buhangin.
+- [x] South Warehouse — Toril.
 
 ### Project Seed Data
 
-- [ ] Matina Commercial Building.
-- [ ] Lanang Business Center.
-- [ ] Toril Residential Development.
-- [ ] Buhangin Warehouse Expansion.
-- [ ] Mintal Community Complex.
-- [ ] Downtown Office Renovation.
+- [x] Matina Commercial Building.
+- [x] Lanang Business Center.
+- [x] Toril Residential Development.
+- [x] Buhangin Warehouse Expansion.
+- [x] Mintal Community Complex.
+- [x] Downtown Office Renovation.
 
 ### Material Seed Data
 
@@ -514,20 +514,40 @@ Include realistic examples such as:
 
 ### Data Integrity
 
-- [ ] Verify all entity relationships.
-- [ ] Verify unique material SKUs.
-- [ ] Verify unique reference numbers.
-- [ ] Verify warehouse inventory balances.
-- [ ] Verify transaction quantities.
-- [ ] Verify project material allocations.
-- [ ] Verify purchase order totals.
-- [ ] Verify request fulfillment quantities.
-- [ ] Verify equipment assignments.
-- [ ] Verify historical transaction consistency.
-- [ ] Include low-stock materials.
-- [ ] Include out-of-stock materials.
-- [ ] Include partially fulfilled requests.
-- [ ] Include partially received purchase orders.
+- [x] Verify all entity relationships.
+- [x] Verify unique material SKUs.
+- [x] Verify unique reference numbers.
+- [x] Verify warehouse inventory balances.
+- [x] Verify transaction quantities.
+- [x] Verify project material allocations.
+- [x] Verify purchase order totals.
+- [x] Verify request fulfillment quantities.
+- [x] Verify equipment assignments.
+- [x] Verify historical transaction consistency.
+- [x] Include low-stock materials.
+- [x] Include out-of-stock materials.
+- [x] Include partially fulfilled requests.
+- [x] Include partially received purchase orders.
+
+Verified dataset (rendered from `findSeedIntegrityProblems`, zero problems):
+10 categories, 55 materials, 3 warehouses, 6 projects, 12 suppliers,
+20 equipment, 124 stock movements, 98 balances, 14 project material
+allocations, 15 requests, 10 purchase orders, 34 activity records,
+5 notifications, 4 assignments, 3 maintenance records.
+
+Generation rules that keep the data honest:
+
+- Balances are derived by replaying movements, never written by hand.
+- Requests and purchase orders are built before the movements they cause, so
+  every fulfilled request has a matching stock-out and every received line has
+  a matching stock-in.
+- A stock-out is only emitted when a warehouse actually holds the quantity;
+  otherwise the recorded fulfilment is reduced to zero.
+- Project material allocations are aggregated from stock-outs and returns.
+- One material is deliberately drained to zero to exercise the out-of-stock
+  state, with its movement history explaining how.
+- `src/instrumentation.ts` re-runs the integrity check at every development
+  server start and reports failures in the console.
 
 All names, contact details, business information,
 and operational records must be fictional.
@@ -1903,7 +1923,7 @@ Update this section after each completed phase.
 | 03 | Application Layout | P0 | Completed |
 | 04 | Shared UI Components | P0 | Completed |
 | 05 | Data Models and Utilities | P0 | Completed |
-| 06 | Mock Data | P0 | Pending |
+| 06 | Mock Data | P0 | Completed |
 | 07 | State Management | P0 | Pending |
 | 08 | Dashboard | P0 | Pending |
 | 09 | Materials Management | P0 | Pending |

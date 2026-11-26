@@ -2,6 +2,7 @@ import type {
   InventoryBalance,
   MaterialRequest,
   MaterialRequestItem,
+  ProjectMaterial,
   PurchaseOrder,
   PurchaseOrderItem,
   StockMovement,
@@ -35,6 +36,7 @@ const PERFORMER = "Demo user";
 export interface InventorySeed {
   movements: StockMovement[];
   balances: InventoryBalance[];
+  projectMaterials: ProjectMaterial[];
   materialRequests: MaterialRequest[];
   purchaseOrders: PurchaseOrder[];
 }
@@ -375,6 +377,36 @@ export function buildInventorySeed(): InventorySeed {
     reason: "Unused blocks returned from Mintal site",
   });
 
+  // Drain the lowest-stock material completely so the demo shows a genuine
+  // out-of-stock case. Stock status treats "no balance" as zero, and the
+  // movement trail explains how it got there.
+  const totals = materials.map((material) => ({
+    material,
+    total: warehouses.reduce(
+      (sum, warehouse) => sum + balanceOf(material.id, warehouse.id),
+      0,
+    ),
+  }));
+  const drainCandidate = totals
+    .filter((entry) => entry.total > 0)
+    .sort((left, right) => left.total - right.total)[0];
+
+  if (drainCandidate) {
+    for (const warehouse of warehouses) {
+      const available = balanceOf(drainCandidate.material.id, warehouse.id);
+      if (available <= 0) continue;
+      record({
+        type: "stock-out",
+        materialId: drainCandidate.material.id,
+        warehouseId: warehouse.id,
+        projectId: projects[1].id,
+        quantity: available,
+        unitCostCentavos: drainCandidate.material.unitCostCentavos,
+        reason: "Issued to site until stock is replenished",
+      });
+    }
+  }
+
   const inventoryBalances: InventoryBalance[] = [];
   for (const [key, quantity] of balances.entries()) {
     if (quantity <= 0) continue;
@@ -388,9 +420,39 @@ export function buildInventorySeed(): InventorySeed {
     });
   }
 
+  // On-site quantities are derived from the movements that put material there:
+  // stock-outs add, returns subtract. No separate hand-written ledger exists.
+  const projectMaterialQuantities = new Map<string, number>();
+  for (const movement of movements) {
+    if (!movement.projectId) continue;
+    if (movement.type !== "stock-out" && movement.type !== "return") continue;
+    const key = `${movement.projectId}::${movement.materialId}`;
+    const delta =
+      movement.type === "stock-out" ? movement.quantity : -movement.quantity;
+    projectMaterialQuantities.set(
+      key,
+      (projectMaterialQuantities.get(key) ?? 0) + delta,
+    );
+  }
+
+  const projectMaterials: ProjectMaterial[] = [];
+  for (const [key, quantity] of projectMaterialQuantities.entries()) {
+    if (quantity <= 0) continue;
+    const [projectId, materialId] = key.split("::");
+    projectMaterials.push({
+      id: `pm-${projectId}-${materialId}`,
+      projectId,
+      materialId,
+      quantity,
+      consumedQuantity: 0,
+      updatedAt: isoAt(day, 18, 0),
+    });
+  }
+
   return {
     movements,
     balances: inventoryBalances,
+    projectMaterials,
     materialRequests,
     purchaseOrders,
   };

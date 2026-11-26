@@ -84,6 +84,7 @@ export const maintenanceRecords: MaintenanceRecord[] = [
     costCentavos: 680_000,
     performedBy: "Davao Equipment Services",
     startedAt: isoAt(96, 9, 0),
+    equipmentStatusAfter: "under-maintenance",
   },
   {
     id: "mnt-0002",
@@ -92,6 +93,7 @@ export const maintenanceRecords: MaintenanceRecord[] = [
     costCentavos: 320_000,
     performedBy: "Northside Air Systems",
     startedAt: isoAt(101, 13, 30),
+    equipmentStatusAfter: "under-maintenance",
   },
   {
     id: "mnt-0003",

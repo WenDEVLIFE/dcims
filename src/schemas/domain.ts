@@ -1,11 +1,13 @@
 import { z } from "zod";
 
 import {
+  ACTIVITY_ENTITY_TYPES,
   EQUIPMENT_CONDITIONS,
   EQUIPMENT_STATUSES,
   MATERIAL_REQUEST_STATUSES,
   MATERIAL_STATUSES,
   MATERIAL_UNITS,
+  NOTIFICATION_TYPES,
   PROJECT_STATUSES,
   PURCHASE_ORDER_STATUSES,
   REQUEST_PRIORITIES,
@@ -230,6 +232,64 @@ export const applicationSettingsSchema = z.object({
     overduePurchaseOrders: z.boolean(),
   }),
   updatedAt: timestampSchema,
+});
+
+export const projectMaterialSchema = z.object({
+  id: idSchema,
+  projectId: idSchema,
+  materialId: idSchema,
+  quantity: nonNegativeQuantitySchema,
+  consumedQuantity: nonNegativeQuantitySchema,
+  updatedAt: timestampSchema,
+});
+
+export const inventoryBalanceSchema = z.object({
+  id: idSchema,
+  materialId: idSchema,
+  warehouseId: idSchema,
+  quantity: nonNegativeQuantitySchema,
+  updatedAt: timestampSchema,
+});
+
+export const equipmentAssignmentSchema = z.object({
+  id: idSchema,
+  equipmentId: idSchema,
+  projectId: idSchema,
+  assignedTo: z.string().min(1).max(120),
+  assignedAt: timestampSchema,
+  returnedAt: timestampSchema.optional(),
+  notes: z.string().max(500).optional(),
+});
+
+export const maintenanceRecordSchema = z.object({
+  id: idSchema,
+  equipmentId: idSchema,
+  description: z.string().min(1).max(300),
+  costCentavos: centavosSchema,
+  performedBy: z.string().min(1).max(120),
+  startedAt: timestampSchema,
+  completedAt: timestampSchema.optional(),
+  equipmentStatusAfter: z.enum(EQUIPMENT_STATUSES),
+});
+
+export const activityLogSchema = z.object({
+  id: idSchema,
+  action: z.string().min(1).max(160),
+  entityType: z.enum(ACTIVITY_ENTITY_TYPES),
+  entityId: idSchema,
+  description: z.string().min(1).max(500),
+  performedBy: z.string().min(1).max(120),
+  createdAt: timestampSchema,
+});
+
+export const notificationSchema = z.object({
+  id: idSchema,
+  type: z.enum(NOTIFICATION_TYPES),
+  title: z.string().min(1).max(120),
+  message: z.string().min(1).max(300),
+  read: z.boolean(),
+  createdAt: timestampSchema,
+  link: z.string().max(200).optional(),
 });
 
 /** Form-level input that omits server-owned identifiers and timestamps. */

@@ -25,7 +25,7 @@ const SEEDS: WarehouseSeed[] = [
     createdDay: 0,
   },
   {
-    name: "South Yard",
+    name: "South Warehouse",
     location: "Toril",
     address: "McArthur Highway, Toril, Davao City",
     createdDay: 1,

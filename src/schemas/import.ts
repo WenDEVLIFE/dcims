@@ -2,7 +2,13 @@ import { z } from "zod";
 
 import {
   categorySchema,
+  equipmentAssignmentSchema,
   equipmentSchema,
+  inventoryBalanceSchema,
+  maintenanceRecordSchema,
+  activityLogSchema,
+  notificationSchema,
+  projectMaterialSchema,
   materialRequestSchema,
   materialSchema,
   purchaseOrderSchema,
@@ -29,11 +35,17 @@ export const demoDataSchema = z.object({
   materials: z.array(materialSchema),
   warehouses: z.array(warehouseSchema),
   stockMovements: z.array(stockMovementSchema),
+  balances: z.array(inventoryBalanceSchema),
   projects: z.array(projectSchema),
+  projectMaterials: z.array(projectMaterialSchema),
   materialRequests: z.array(materialRequestSchema),
   equipment: z.array(equipmentSchema),
+  equipmentAssignments: z.array(equipmentAssignmentSchema),
+  maintenanceRecords: z.array(maintenanceRecordSchema),
   suppliers: z.array(supplierSchema),
   purchaseOrders: z.array(purchaseOrderSchema),
+  activityLogs: z.array(activityLogSchema),
+  notifications: z.array(notificationSchema),
   settings: applicationSettingsSchema,
 });
 

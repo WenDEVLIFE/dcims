@@ -12,7 +12,7 @@ export default function DashboardPage() {
       <ModulePlaceholder
         module="Dashboard metrics and analytics"
         phase="Phase 08"
-        summary="Inventory value, stock health, request queue, and equipment availability will be derived from domain records once state management and seed data land."
+        summary="Inventory value, stock health, request queue, and equipment availability will be derived from domain records once state management lands."
       />
     </PageContainer>
   );

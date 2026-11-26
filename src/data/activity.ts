@@ -87,9 +87,14 @@ export function buildActivityLogs(seed: InventorySeed): ActivityLog[] {
  * stock comes from real balances, pending requests from real request records.
  */
 export function buildNotifications(seed: InventorySeed): Notification[] {
+  // Low stock compares against each material's own reorder point, so the
+  // notification matches what the materials table will show.
   const lowStock = seed.balances
-    .filter((balance) => balance.quantity <= 20)
-    .slice(0, 3);
+    .filter((balance) => {
+      const material = materials.find((item) => item.id === balance.materialId);
+      return material ? balance.quantity <= material.reorderPoint : false;
+    })
+    .slice(0, 4);
 
   const notifications: Notification[] = lowStock.map((balance, index) => {
     const material = materials.find((item) => item.id === balance.materialId);

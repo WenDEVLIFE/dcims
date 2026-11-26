@@ -69,6 +69,9 @@ const SEEDS: MaterialSeed[] = [
   ["Tarpaulin Roll 8x12", "CAT-10", "piece", 950, 20, "Heavy-duty site cover and signage tarp."],
   ["Safety Gloves", "CAT-10", "piece", 85, 60, "Coated work gloves for handling materials."],
   ["First Aid Kit", "CAT-10", "piece", 1450, 5, "Site first aid kit with refill pack."],
+  ["Tile Adhesive 25kg", "CAT-08", "bag", 560, 40, "Cement-based thin-set tile adhesive."],
+  ["Waterproofing Compound 20L", "CAT-08", "liter", 340, 30, "Elastomeric membrane for wet areas."],
+  ["Concrete Sealant 4L", "CAT-08", "liter", 780, 20, "Penetrating sealer for exposed concrete."],
 ];
 
 export const materials: Material[] = SEEDS.map(

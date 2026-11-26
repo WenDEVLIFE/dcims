@@ -181,6 +181,16 @@
     @apply border-border outline-ring/50;
   }
 
+  /*
+   * Tailwind v4 preflight leaves native buttons on the default cursor.
+   * Interactive controls must read as clickable, so the base layer opts in
+   * once instead of repeating cursor-pointer on every component.
+   */
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
   body {
     @apply bg-background font-sans text-foreground;
     font-size: 0.875rem;

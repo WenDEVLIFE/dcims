@@ -28,6 +28,7 @@ export const initialDemoData: DemoData = {
   balances: inventory.balances,
   projects,
   projectMaterials: inventory.projectMaterials,
+  materialConsumptions: [],
   materialRequests: inventory.materialRequests,
   equipment,
   equipmentAssignments,

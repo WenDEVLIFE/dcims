@@ -234,6 +234,17 @@ export const applicationSettingsSchema = z.object({
   updatedAt: timestampSchema,
 });
 
+export const materialConsumptionSchema = z.object({
+  id: idSchema,
+  projectId: idSchema,
+  materialId: idSchema,
+  quantity: quantitySchema,
+  unitCostCentavos: centavosSchema,
+  totalCostCentavos: centavosSchema,
+  reference: z.string().min(1),
+  consumedAt: timestampSchema,
+});
+
 export const projectMaterialSchema = z.object({
   id: idSchema,
   projectId: idSchema,

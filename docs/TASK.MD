@@ -566,61 +566,82 @@ Priority: P0
 
 ### Domain Store
 
-- [ ] Create centralized Zustand domain store.
-- [ ] Configure Zustand persist middleware.
-- [ ] Configure LocalStorage persistence.
-- [ ] Configure persisted state version.
-- [ ] Configure state migration.
-- [ ] Configure hydration handling.
-- [ ] Configure seed data initialization.
-- [ ] Implement invalid-state recovery.
-- [ ] Implement reusable state selectors.
-- [ ] Implement derived dashboard statistics.
-- [ ] Implement coordinated inventory transactions.
-- [ ] Implement demo data reset.
-- [ ] Implement JSON data export.
-- [ ] Implement validated JSON data import.
+- [x] Create centralized Zustand domain store.
+- [x] Configure Zustand persist middleware.
+- [x] Configure LocalStorage persistence.
+- [x] Configure persisted state version.
+- [x] Configure state migration.
+- [x] Configure hydration handling.
+- [x] Configure seed data initialization.
+- [x] Implement invalid-state recovery.
+- [x] Implement reusable state selectors.
+- [x] Implement derived dashboard statistics.
+- [x] Implement coordinated inventory transactions.
+- [x] Implement demo data reset.
+- [x] Implement JSON data export.
+- [x] Implement validated JSON data import.
 
 ### UI Store
 
-- [ ] Manage sidebar state.
-- [ ] Manage mobile navigation state.
-- [ ] Manage global search state.
-- [ ] Manage notification panel state.
-- [ ] Manage temporary UI preferences.
+- [x] Manage sidebar state.
+- [x] Manage mobile navigation state.
+- [x] Manage global search state.
+- [x] Manage notification panel state.
+- [x] Manage temporary UI preferences.
 
 ### Business Actions
 
-- [ ] Create material.
-- [ ] Update material.
-- [ ] Archive material.
-- [ ] Create category.
-- [ ] Update category.
-- [ ] Create warehouse.
-- [ ] Update warehouse.
-- [ ] Record stock-in.
-- [ ] Record stock-out.
-- [ ] Transfer inventory.
-- [ ] Record stock adjustment.
-- [ ] Record material return.
-- [ ] Create project.
-- [ ] Update project.
-- [ ] Record material consumption.
-- [ ] Create material request.
-- [ ] Approve material request.
-- [ ] Reject material request.
-- [ ] Fulfill material request.
-- [ ] Register equipment.
-- [ ] Assign equipment.
-- [ ] Return equipment.
-- [ ] Record equipment maintenance.
-- [ ] Create supplier.
-- [ ] Update supplier.
-- [ ] Create purchase order.
-- [ ] Approve purchase order.
-- [ ] Receive purchase order.
-- [ ] Generate activity records.
-- [ ] Generate notifications.
+- [x] Create material.
+- [x] Update material.
+- [x] Archive material.
+- [x] Create category.
+- [x] Update category.
+- [x] Create warehouse.
+- [x] Update warehouse.
+- [x] Record stock-in.
+- [x] Record stock-out.
+- [x] Transfer inventory.
+- [x] Record stock adjustment.
+- [x] Record material return.
+- [x] Create project.
+- [x] Update project.
+- [x] Record material consumption.
+- [x] Create material request.
+- [x] Approve material request.
+- [x] Reject material request.
+- [x] Fulfill material request.
+- [x] Register equipment.
+- [x] Assign equipment.
+- [x] Return equipment.
+- [x] Record equipment maintenance.
+- [x] Create supplier.
+- [x] Update supplier.
+- [x] Create purchase order.
+- [x] Approve purchase order.
+- [x] Receive purchase order.
+- [x] Generate activity records.
+- [x] Generate notifications.
+
+Architecture:
+
+- Rules live in `src/services/*` as pure functions that take the current
+  dataset and return a new dataset or a failure. The store only commits a
+  successful result, so a rejected operation cannot half-apply.
+- `src/stores/domain-store.ts` owns persistence (`dcims-domain-v1`, version 1),
+  migration, and unwraps service results into store actions.
+- `src/stores/selectors.ts` derives every dashboard figure from records.
+- Rehydrated data is validated with the full demo-data schema; an invalid
+  payload falls back to the seed and raises a `recovered` flag.
+
+Verified behaviour (15/15 checks, run against the seed):
+over-release rejected, valid release applied, transfer to the same warehouse
+rejected, over-transfer rejected, negative adjustment rejected, adjustment
+without a reason rejected, approving a decided request rejected, fulfilment
+never exceeding the approved quantity, re-fulfilling a completed request
+rejected, over-receiving rejected, receiving against a cancelled order
+rejected, double equipment assignment rejected, damaged equipment assignment
+rejected, archiving stock still on hand rejected, double order approval
+rejected.
 
 ### Acceptance Criteria
 
@@ -1924,7 +1945,7 @@ Update this section after each completed phase.
 | 04 | Shared UI Components | P0 | Completed |
 | 05 | Data Models and Utilities | P0 | Completed |
 | 06 | Mock Data | P0 | Completed |
-| 07 | State Management | P0 | Pending |
+| 07 | State Management | P0 | Completed |
 | 08 | Dashboard | P0 | Pending |
 | 09 | Materials Management | P0 | Pending |
 | 10 | Categories Management | P1 | Pending |

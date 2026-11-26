@@ -9,8 +9,14 @@ const UI_STORE_VERSION = 1;
 interface UiState {
   sidebarCollapsed: boolean;
   mobileNavOpen: boolean;
+  searchOpen: boolean;
+  searchQuery: string;
+  notificationsOpen: boolean;
   toggleSidebar: () => void;
   setMobileNavOpen: (open: boolean) => void;
+  setSearchOpen: (open: boolean) => void;
+  setSearchQuery: (query: string) => void;
+  setNotificationsOpen: (open: boolean) => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -18,9 +24,15 @@ export const useUiStore = create<UiState>()(
     (set) => ({
       sidebarCollapsed: false,
       mobileNavOpen: false,
+      searchOpen: false,
+      searchQuery: "",
+      notificationsOpen: false,
       toggleSidebar: () =>
         set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
       setMobileNavOpen: (open: boolean) => set({ mobileNavOpen: open }),
+      setSearchOpen: (open: boolean) => set({ searchOpen: open }),
+      setSearchQuery: (query: string) => set({ searchQuery: query }),
+      setNotificationsOpen: (open: boolean) => set({ notificationsOpen: open }),
     }),
     {
       name: "dcims-ui-v1",

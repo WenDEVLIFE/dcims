@@ -733,42 +733,54 @@ Priority: P0
 
 ### Materials Page
 
-- [ ] Create materials page header.
-- [ ] Create inventory summary cards.
-- [ ] Create materials data table.
-- [ ] Display material name and SKU.
-- [ ] Display material category.
-- [ ] Display measurement unit.
-- [ ] Display available stock.
-- [ ] Display average inventory cost.
-- [ ] Display stock status.
-- [ ] Display row actions.
+- [x] Create materials page header.
+- [x] Create inventory summary cards.
+- [x] Create materials data table.
+- [x] Display material name and SKU.
+- [x] Display material category.
+- [x] Display measurement unit.
+- [x] Display available stock.
+- [x] Display average inventory cost.
+- [x] Display stock status.
+- [x] Display row actions.
 
 ### Material Operations
 
-- [ ] Implement add material form.
-- [ ] Implement edit material form.
-- [ ] Implement material details view.
-- [ ] Implement archive material action.
-- [ ] Implement archive confirmation.
-- [ ] Implement material search.
-- [ ] Implement category filter.
-- [ ] Implement warehouse filter.
-- [ ] Implement stock status filter.
-- [ ] Implement sorting.
-- [ ] Implement pagination.
-- [ ] Implement CSV export.
+- [x] Implement add material form.
+- [x] Implement edit material form.
+- [x] Implement material details view.
+- [x] Implement archive material action.
+- [x] Implement archive confirmation.
+- [x] Implement material search.
+- [x] Implement category filter.
+- [x] Implement warehouse filter.
+- [x] Implement stock status filter.
+- [x] Implement sorting.
+- [x] Implement pagination.
+- [x] Implement CSV export.
 
 ### Business Validation
 
-- [ ] Prevent duplicate material SKUs.
-- [ ] Prevent negative unit costs.
-- [ ] Prevent negative reorder levels.
-- [ ] Validate required material fields.
-- [ ] Prevent archiving materials with remaining stock
+- [x] Prevent duplicate material SKUs.
+- [x] Prevent negative unit costs.
+- [x] Prevent negative reorder levels.
+- [x] Validate required material fields.
+- [x] Prevent archiving materials with remaining stock
       or unresolved inventory transactions.
-- [ ] Derive stock status from inventory balances.
-- [ ] Generate activity logs after changes.
+- [x] Derive stock status from inventory balances.
+- [x] Generate activity logs after changes.
+
+Implementation notes:
+
+- Forms use React Hook Form with the Zod `materialInputSchema`. The approved
+  stack lists RHF, and `FormField` owns no form-library state, so swapping to
+  TanStack later would touch the dialog only.
+- SKUs are generated (`MAT-####`), never typed, which is why duplicate SKUs
+  cannot be produced from the UI. The service still checks name uniqueness.
+- Stock status derives from summed warehouse balances against the material's
+  reorder point, so it cannot drift from the ledger.
+- CSV export writes only the rows matching the current filters and runs every
+  value through the formula-injection escaping in `lib/csv.ts`.
 
 ### Acceptance Criteria
 
@@ -782,18 +794,18 @@ Priority: P0
 
 Priority: P1
 
-- [ ] Create categories page.
-- [ ] Display category cards or table.
-- [ ] Display category material counts.
-- [ ] Display category inventory value.
-- [ ] Implement create category form.
-- [ ] Implement edit category form.
-- [ ] Implement archive category action.
-- [ ] Implement category search.
-- [ ] Implement category status filter.
-- [ ] Prevent duplicate category names.
-- [ ] Prevent archiving categories with active materials.
-- [ ] Generate activity logs.
+- [x] Create categories page.
+- [x] Display category cards or table.
+- [x] Display category material counts.
+- [x] Display category inventory value.
+- [x] Implement create category form.
+- [x] Implement edit category form.
+- [x] Implement archive category action.
+- [x] Implement category search.
+- [x] Implement category status filter.
+- [x] Prevent duplicate category names.
+- [x] Prevent archiving categories with active materials.
+- [x] Generate activity logs.
 
 ### Acceptance Criteria
 
@@ -1964,8 +1976,8 @@ Update this section after each completed phase.
 | 06 | Mock Data | P0 | Completed |
 | 07 | State Management | P0 | Completed |
 | 08 | Dashboard | P0 | Completed |
-| 09 | Materials Management | P0 | Pending |
-| 10 | Categories Management | P1 | Pending |
+| 09 | Materials Management | P0 | Completed |
+| 10 | Categories Management | P1 | Completed |
 | 11 | Warehouse Management | P0 | Pending |
 | 12 | Stock Movements | P0 | Pending |
 | 13 | Construction Projects | P1 | Pending |

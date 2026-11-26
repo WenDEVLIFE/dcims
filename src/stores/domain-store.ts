@@ -48,11 +48,12 @@ interface DomainStore extends DomainData {
   createMaterial: (input: catalog.MaterialInput) => DomainResult<void>;
   updateMaterial: (id: string, patch: Partial<catalog.MaterialInput>) => DomainResult<void>;
   archiveMaterial: (id: string) => DomainResult<void>;
-  createCategory: (input: { name: string; description?: string }) => DomainResult<void>;
+  createCategory: (input: catalog.CategoryInput) => DomainResult<void>;
   updateCategory: (
     id: string,
-    input: { name?: string; description?: string },
+    input: Partial<catalog.CategoryInput>,
   ) => DomainResult<void>;
+  archiveCategory: (id: string) => DomainResult<void>;
   createWarehouse: (input: {
     name: string;
     location: string;
@@ -170,6 +171,8 @@ export const useDomainStore = create<DomainStore>()(
           commit(catalog.createCategory(get(), input, context())),
         updateCategory: (id, input) =>
           commit(catalog.updateCategory(get(), id, input, context())),
+        archiveCategory: (id) =>
+          commit(catalog.archiveCategory(get(), id, context())),
         createWarehouse: (input) =>
           commit(catalog.createWarehouse(get(), input, context())),
         updateWarehouse: (id, input) =>

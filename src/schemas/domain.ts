@@ -2,6 +2,9 @@ import { z } from "zod";
 
 import {
   ACTIVITY_ENTITY_TYPES,
+  CATEGORY_COLORS,
+  CATEGORY_ICONS,
+  CATEGORY_STATUSES,
   EQUIPMENT_CONDITIONS,
   EQUIPMENT_STATUSES,
   MATERIAL_REQUEST_STATUSES,
@@ -54,11 +57,19 @@ export const materialSchema = z.object({
   updatedAt: timestampSchema,
 });
 
-export const categorySchema = z.object({
+export const categoryInputSchema = z.object({
+  name: z.string().trim().min(1, "Category name is required").max(80),
+  description: z.string().trim().max(300).optional(),
+  icon: z.enum(CATEGORY_ICONS).optional(),
+  color: z.enum(CATEGORY_COLORS).optional(),
+});
+
+export type CategoryInputValues = z.infer<typeof categoryInputSchema>;
+
+export const categorySchema = categoryInputSchema.extend({
   id: idSchema,
   code: z.string().min(1),
-  name: z.string().min(1, "Category name is required").max(80),
-  description: z.string().max(300).optional(),
+  status: z.enum(CATEGORY_STATUSES).optional(),
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });
@@ -304,6 +315,17 @@ export const notificationSchema = z.object({
 });
 
 /** Form-level input that omits server-owned identifiers and timestamps. */
+export const materialInputSchema = z.object({
+  name: z.string().min(1, "Material name is required").max(120),
+  categoryId: z.string().min(1, "Choose a category"),
+  unit: z.enum(MATERIAL_UNITS),
+  unitCostCentavos: z.number().int().nonnegative(),
+  reorderPoint: z.number().nonnegative(),
+  description: z.string().max(500).optional(),
+});
+
+export type MaterialInputValues = z.infer<typeof materialInputSchema>;
+
 export const materialFormSchema = materialSchema.omit({
   id: true,
   createdAt: true,

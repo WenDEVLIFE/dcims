@@ -153,17 +153,24 @@ export function monthlyMovementCounts(
   });
 }
 
-export function inventoryValueByCategory(state: DomainData): SeriesPoint[] {
+export function categoryInventoryValues(
+  state: Pick<DomainData, "materials" | "balances">,
+): Map<string, Centavos> {
   const totals = new Map<string, number>();
+  const materials = new Map(state.materials.map((material) => [material.id, material]));
 
   for (const balance of state.balances) {
-    const material = state.materials.find((item) => item.id === balance.materialId);
+    const material = materials.get(balance.materialId);
     if (!material) continue;
     const value = Math.round(balance.quantity * material.unitCostCentavos);
     totals.set(material.categoryId, (totals.get(material.categoryId) ?? 0) + value);
   }
 
-  return [...totals.entries()]
+  return totals;
+}
+
+export function inventoryValueByCategory(state: DomainData): SeriesPoint[] {
+  return [...categoryInventoryValues(state)]
     .map(([categoryId, value]) => ({
       label:
         state.categories.find((category) => category.id === categoryId)?.name ??

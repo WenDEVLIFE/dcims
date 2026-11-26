@@ -17,6 +17,7 @@ import {
   nextSequence,
 } from "@/lib/ids";
 import { appendActivity, type OperationContext } from "@/services/support";
+import { categoryInputSchema, type CategoryInputValues } from "@/schemas/domain";
 
 /** Master-data operations. These never touch balances or movements. */
 
@@ -38,9 +39,9 @@ export function createMaterial(
   if (data.materials.some((item) => item.name.toLowerCase() === input.name.trim().toLowerCase())) {
     return fail("A material with this name already exists");
   }
-  if (!data.categories.some((category) => category.id === input.categoryId)) {
-    return fail("Category not found");
-  }
+  const category = data.categories.find((item) => item.id === input.categoryId);
+  if (!category) return fail("Category not found");
+  if (category.status === "archived") return fail("Choose an active category");
   if (!Number.isFinite(input.unitCostCentavos) || input.unitCostCentavos < 0) {
     return fail("Unit cost must be zero or greater");
   }
@@ -89,11 +90,12 @@ export function updateMaterial(
   if (patch.name !== undefined && !patch.name.trim()) {
     return fail("Material name cannot be empty");
   }
-  if (
-    patch.categoryId !== undefined &&
-    !data.categories.some((category) => category.id === patch.categoryId)
-  ) {
-    return fail("Category not found");
+  if (patch.categoryId !== undefined) {
+    const category = data.categories.find((item) => item.id === patch.categoryId);
+    if (!category) return fail("Category not found");
+    if (category.status === "archived" && category.id !== material.categoryId) {
+      return fail("Choose an active category");
+    }
   }
   if (
     patch.unitCostCentavos !== undefined &&
@@ -164,25 +166,30 @@ export function archiveMaterial(
   });
 }
 
+export type CategoryInput = CategoryInputValues;
+
+function categoryNameExists(data: DomainData, name: string, exceptId?: string) {
+  return data.categories.some(
+    (category) =>
+      category.id !== exceptId &&
+      category.name.trim().toLowerCase() === name.toLowerCase(),
+  );
+}
+
 export function createCategory(
   data: DomainData,
-  input: { name: string; description?: string },
+  input: CategoryInput,
   ctx: OperationContext,
 ): DomainResult<DomainData> {
-  if (!input.name.trim()) return fail("Category name is required");
-  if (
-    data.categories.some(
-      (category) => category.name.toLowerCase() === input.name.trim().toLowerCase(),
-    )
-  ) {
-    return fail("A category with this name already exists");
-  }
+  const parsed = categoryInputSchema.safeParse(input);
+  if (!parsed.success) return fail(parsed.error.issues[0].message);
+  if (categoryNameExists(data, parsed.data.name)) return fail("A category with this name already exists");
 
   const category: MaterialCategory = {
+    ...parsed.data,
     id: generateId(),
-    code: `CAT-${String(data.categories.length + 1).padStart(2, "0")}`,
-    name: input.name.trim(),
-    description: input.description,
+    code: `CAT-${String(nextSequence(data.categories.map((item) => item.code))).padStart(2, "0")}`,
+    status: "active",
     createdAt: ctx.now,
     updatedAt: ctx.now,
   };
@@ -204,27 +211,64 @@ export function createCategory(
 export function updateCategory(
   data: DomainData,
   categoryId: string,
-  input: { name?: string; description?: string },
+  input: Partial<CategoryInput>,
   ctx: OperationContext,
 ): DomainResult<DomainData> {
   const category = data.categories.find((item) => item.id === categoryId);
   if (!category) return fail("Category not found");
-  if (input.name !== undefined && !input.name.trim()) {
-    return fail("Category name cannot be empty");
+  const parsed = categoryInputSchema.safeParse({
+    name: input.name ?? category.name,
+    description: input.description ?? category.description,
+    icon: input.icon ?? category.icon,
+    color: input.color ?? category.color,
+  });
+  if (!parsed.success) return fail(parsed.error.issues[0].message);
+  if (categoryNameExists(data, parsed.data.name, categoryId)) return fail("A category with this name already exists");
+  const updated = { ...category, ...parsed.data, updatedAt: ctx.now };
+
+  return succeed({
+    ...data,
+    categories: data.categories.map((item) =>
+      item.id === categoryId ? updated : item,
+    ),
+    activityLogs: appendActivity(data, {
+      action: "Category updated",
+      entityType: "category",
+      entityId: categoryId,
+      description: `${updated.name} updated.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
+  });
+}
+
+export function archiveCategory(
+  data: DomainData,
+  categoryId: string,
+  ctx: OperationContext,
+): DomainResult<DomainData> {
+  const category = data.categories.find((item) => item.id === categoryId);
+  if (!category) return fail("Category not found");
+  if (category.status === "archived") return fail("Category is already archived");
+  if (data.materials.some((material) =>
+    material.categoryId === categoryId && material.status === "active",
+  )) {
+    return fail("Move or archive the active materials before archiving this category");
   }
 
   return succeed({
     ...data,
     categories: data.categories.map((item) =>
-      item.id === categoryId
-        ? {
-            ...item,
-            name: input.name?.trim() ?? item.name,
-            description: input.description ?? item.description,
-            updatedAt: ctx.now,
-          }
-        : item,
+      item.id === categoryId ? { ...item, status: "archived", updatedAt: ctx.now } : item,
     ),
+    activityLogs: appendActivity(data, {
+      action: "Category archived",
+      entityType: "category",
+      entityId: categoryId,
+      description: `${category.name} archived.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
   });
 }
 

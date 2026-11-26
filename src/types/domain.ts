@@ -21,6 +21,11 @@ export type Centavos = number;
 export const MATERIAL_STATUSES = ["active", "discontinued"] as const;
 export type MaterialStatus = (typeof MATERIAL_STATUSES)[number];
 
+export const CATEGORY_STATUSES = ["active", "archived"] as const;
+export const CATEGORY_ICONS = ["package", "layers", "wrench", "shield"] as const;
+export const CATEGORY_COLORS = ["neutral", "orange", "blue", "green"] as const;
+export type CategoryStatus = (typeof CATEGORY_STATUSES)[number];
+
 export const MATERIAL_UNITS = [
   "bag",
   "piece",
@@ -59,6 +64,10 @@ export interface MaterialCategory {
   code: string;
   name: string;
   description?: string;
+  icon?: (typeof CATEGORY_ICONS)[number];
+  color?: (typeof CATEGORY_COLORS)[number];
+  /** Older inventory snapshots omit this field and represent active categories. */
+  status?: CategoryStatus;
   createdAt: ISOTimestamp;
   updatedAt: ISOTimestamp;
 }

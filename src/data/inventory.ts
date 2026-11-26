@@ -407,6 +407,40 @@ export function buildInventorySeed(): InventorySeed {
     }
   }
 
+  // Keep a few materials genuinely low on stock in aggregate. Stock-outs are
+  // real movements, so the low state is explainable from the ledger and the
+  // dashboard's low-stock tile has something true to show.
+  const lowStockCandidates = totals
+    .filter(
+      (entry) =>
+        entry.total > entry.material.reorderPoint &&
+        entry.material.reorderPoint > 0,
+    )
+    .sort((left, right) => left.total - right.total)
+    .slice(0, 3);
+
+  for (const candidate of lowStockCandidates) {
+    const target = Math.max(1, Math.floor(candidate.material.reorderPoint * 0.6));
+    let surplus = candidate.total - target;
+
+    for (const warehouse of warehouses) {
+      if (surplus <= 0) break;
+      const available = balanceOf(candidate.material.id, warehouse.id);
+      if (available <= 0) continue;
+      const release = Math.min(available, surplus);
+      surplus -= release;
+      record({
+        type: "stock-out",
+        materialId: candidate.material.id,
+        warehouseId: warehouse.id,
+        projectId: projects[0].id,
+        quantity: release,
+        unitCostCentavos: candidate.material.unitCostCentavos,
+        reason: "Consumed on active site",
+      });
+    }
+  }
+
   const inventoryBalances: InventoryBalance[] = [];
   for (const [key, quantity] of balances.entries()) {
     if (quantity <= 0) continue;

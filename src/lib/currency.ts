@@ -46,3 +46,18 @@ export function parseAmountToCentavos(input: string): number | null {
 export function centavosToPesos(centavos: number): number {
   return Math.round(centavos) / 100;
 }
+
+/**
+ * Compact peso label for chart axes and KPI tiles, e.g. "₱4.83M".
+ * TYPOGRAPHY.md requires the exact amount to remain available elsewhere, so
+ * this is only for space-constrained surfaces.
+ */
+export function formatCompactCentavos(centavos: number): string {
+  const pesos = centavosToPesos(Math.round(centavos));
+  if (!Number.isFinite(pesos)) return "₱0";
+
+  const absolute = Math.abs(pesos);
+  if (absolute >= 1_000_000) return `₱${(pesos / 1_000_000).toFixed(2)}M`;
+  if (absolute >= 1_000) return `₱${(pesos / 1_000).toFixed(1)}k`;
+  return `₱${pesos.toFixed(0)}`;
+}

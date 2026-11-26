@@ -658,49 +658,66 @@ Priority: P0
 
 ### Dashboard Header
 
-- [ ] Create dashboard title.
-- [ ] Add supporting description.
-- [ ] Add current date display.
-- [ ] Add date range filter.
-- [ ] Add quick action buttons.
+- [x] Create dashboard title.
+- [x] Add supporting description.
+- [x] Add current date display.
+- [x] Add date range filter.
+- [x] Add quick action buttons.
 
 ### KPI Cards
 
-- [ ] Total inventory value.
-- [ ] Registered materials.
-- [ ] Active construction projects.
-- [ ] Total warehouses.
-- [ ] Low-stock materials.
-- [ ] Pending material requests.
-- [ ] Available equipment.
-- [ ] Outstanding purchase orders.
+- [x] Total inventory value.
+- [x] Registered materials.
+- [x] Active construction projects.
+- [x] Total warehouses.
+- [x] Low-stock materials.
+- [x] Pending material requests.
+- [x] Available equipment.
+- [x] Outstanding purchase orders.
 
 ### Analytics
 
-- [ ] Monthly stock movement chart.
-- [ ] Inventory value by category chart.
-- [ ] Warehouse inventory value chart.
-- [ ] Project material expenditure chart.
-- [ ] Procurement expenditure trend chart.
+- [x] Monthly stock movement chart.
+- [x] Inventory value by category chart.
+- [x] Warehouse inventory value chart.
+- [x] Project material expenditure chart.
+- [x] Procurement expenditure trend chart.
 
 ### Dashboard Sections
 
-- [ ] Recent stock movements.
-- [ ] Low-stock inventory alerts.
-- [ ] Pending material requests.
-- [ ] Active construction projects.
-- [ ] Recent system activities.
-- [ ] Upcoming equipment maintenance.
+- [x] Recent stock movements.
+- [x] Low-stock inventory alerts.
+- [x] Pending material requests.
+- [x] Active construction projects.
+- [x] Recent system activities.
+- [x] Upcoming equipment maintenance.
 
 ### Business Requirements
 
-- [ ] Derive KPI values from application state.
-- [ ] Apply date filters to relevant analytics.
-- [ ] Update metrics after inventory transactions.
-- [ ] Provide navigation to related module details.
-- [ ] Handle empty datasets.
-- [ ] Use currency values or transaction counts when
+- [x] Derive KPI values from application state.
+- [x] Apply date filters to relevant analytics.
+- [x] Update metrics after inventory transactions.
+- [x] Provide navigation to related module details.
+- [x] Handle empty datasets.
+- [x] Use currency values or transaction counts when
       comparing materials with different units.
+
+Implementation notes:
+
+- Every figure comes from `src/stores/selectors.ts`; no dashboard value is
+  hardcoded.
+- Movement charts plot transaction counts and value charts plot centavos,
+  because quantities in bags, metres, and pieces cannot be summed.
+- Months are derived from the dataset's latest movement, not the system clock,
+  so server and client render the same labels.
+- The dashboard renders a skeleton until mount, then reads persisted state,
+  which avoids a hydration mismatch on stored data.
+- The date range filter narrows the movement chart, procurement trend, recent
+  movements, and activity feed.
+- Verified selector output: inventory value ₱15,677,104.00, 55 materials,
+  3 warehouses, 3 active projects, 2 low-stock materials, 1 out-of-stock,
+  7 open requests, 6 outstanding orders, 12 available equipment; seed
+  integrity still reports zero problems.
 
 ### Acceptance Criteria
 
@@ -1946,7 +1963,7 @@ Update this section after each completed phase.
 | 05 | Data Models and Utilities | P0 | Completed |
 | 06 | Mock Data | P0 | Completed |
 | 07 | State Management | P0 | Completed |
-| 08 | Dashboard | P0 | Pending |
+| 08 | Dashboard | P0 | Completed |
 | 09 | Materials Management | P0 | Pending |
 | 10 | Categories Management | P1 | Pending |
 | 11 | Warehouse Management | P0 | Pending |

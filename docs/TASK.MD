@@ -1320,54 +1320,70 @@ Priority: P1
 
 ### Report Dashboard
 
-- [ ] Create reports page.
-- [ ] Create report navigation.
-- [ ] Create date range filters.
-- [ ] Create warehouse filters.
-- [ ] Create project filters.
-- [ ] Create category filters.
-- [ ] Create report summary cards.
+- [x] Create reports page.
+- [x] Create report navigation.
+- [x] Create date range filters.
+- [x] Create warehouse filters.
+- [x] Create project filters.
+- [x] Create category filters.
+- [x] Create report summary cards.
 
 ### Inventory Reports
 
-- [ ] Inventory summary report.
-- [ ] Inventory valuation report.
-- [ ] Low-stock report.
-- [ ] Out-of-stock report.
-- [ ] Warehouse inventory report.
-- [ ] Stock movement report.
+- [x] Inventory summary report.
+- [x] Inventory valuation report.
+- [x] Low-stock report.
+- [x] Out-of-stock report.
+- [x] Warehouse inventory report.
+- [x] Stock movement report.
 
 ### Construction Reports
 
-- [ ] Project material allocation report.
-- [ ] Project material consumption report.
-- [ ] Project material budget report.
-- [ ] Material request fulfillment report.
+- [x] Project material allocation report.
+- [x] Project material consumption report.
+- [x] Project material budget report.
+- [x] Material request fulfillment report.
 
 ### Procurement Reports
 
-- [ ] Purchase order summary report.
-- [ ] Procurement expenditure report.
-- [ ] Supplier purchase history report.
-- [ ] Outstanding delivery report.
+- [x] Purchase order summary report.
+- [x] Procurement expenditure report.
+- [x] Supplier purchase history report.
+- [x] Outstanding delivery report.
 
 ### Equipment Reports
 
-- [ ] Equipment availability report.
-- [ ] Equipment assignment report.
-- [ ] Equipment utilization report.
-- [ ] Equipment maintenance report.
+- [x] Equipment availability report.
+- [x] Equipment assignment report.
+- [x] Equipment utilization report.
+- [x] Equipment maintenance report.
 
 ### Export and Printing
 
-- [ ] Implement CSV export.
-- [ ] Implement print-friendly report layouts.
-- [ ] Add DCIMS branding to printed reports.
-- [ ] Add report generation date.
-- [ ] Add applied filter information.
-- [ ] Add report totals.
-- [ ] Add portfolio demonstration notice.
-- [ ] Support browser print-to-PDF.
+- [x] Implement CSV export.
+- [x] Implement print-friendly report layouts.
+- [x] Add DCIMS branding to printed reports.
+- [x] Add report generation date.
+- [x] Add applied filter information.
+- [x] Add report totals.
+- [x] Add portfolio demonstration notice.
+- [x] Support browser print-to-PDF.
+Implementation notes:
+
+- Eighteen reports across inventory, construction, procurement, and equipment are
+  declared in one registry; each is a pure projection of state plus filters, so
+  the table, the CSV, and the printed page always describe the same rows.
+- Date range, warehouse, project, and category filters apply to the reports that
+  use those dimensions; a report with no matching dimension simply ignores it.
+- Currency columns stay in centavos until formatting, and report totals sum the
+  displayed rows rather than recomputing from source records.
+- Print layout hides navigation, headers, and controls through print media
+  rules, and prints the company block, generation date, applied filters, and the
+  demo notice that are hidden on screen.
+- CSV export writes peso amounts as decimal numbers and dates as ISO days, so a
+  spreadsheet can sort and total them.
+- Next.js refuses `new Date()` in a client component during prerender; the
+  generation timestamp is therefore computed after the mount guard.
 
 ### Acceptance Criteria
 
@@ -2071,7 +2087,7 @@ Update this section after each completed phase.
 | 15 | Equipment Management | P1 | Completed |
 | 16 | Supplier Management | P1 | Completed |
 | 17 | Purchase Orders | P1 | Completed |
-| 18 | Reports and Analytics | P1 | Pending |
+| 18 | Reports and Analytics | P1 | Completed |
 | 19 | Activity Logs | P1 | Pending |
 | 20 | Notifications | P2 | Pending |
 | 21 | Global Search | P2 | Pending |

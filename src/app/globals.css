@@ -233,3 +233,26 @@
 @utility numeric {
   font-variant-numeric: tabular-nums;
 }
+
+/* Print-friendly reports: navigation and controls are hidden so the printed
+   page contains only the report body, its metadata, and totals. */
+@media print {
+  aside,
+  header,
+  .print-hide {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+}

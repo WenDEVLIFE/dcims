@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { LogOut, Settings } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,8 +13,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSessionStore, useSessionUser } from "@/stores/session-store";
 
 export function UserMenu() {
+  const user = useSessionUser();
+  const signOut = useSessionStore((state) => state.signOut);
+  const router = useRouter();
+
+  const name = user?.name ?? "Demo user";
+  const initials = user?.initials ?? "DU";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -21,26 +30,26 @@ export function UserMenu() {
           variant="ghost"
           size="sm"
           className="cursor-pointer gap-2 px-1.5 text-muted-foreground hover:text-foreground"
-          aria-label="Open account menu"
+          aria-label={`Open account menu for ${name}`}
         >
           <span
             aria-hidden="true"
             className="flex size-7 items-center justify-center rounded-md bg-secondary text-[0.6875rem] font-semibold text-secondary-foreground"
           >
-            DU
+            {initials}
           </span>
-          <span className="hidden text-sm font-medium text-foreground sm:inline">
-            Demo user
+          <span className="hidden max-w-28 truncate text-sm font-medium text-foreground sm:inline">
+            {name}
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel className="font-normal">
-          <span className="block text-sm font-medium text-foreground">
-            Demo user
+          <span className="block truncate text-sm font-medium text-foreground">
+            {name}
           </span>
-          <span className="block text-xs text-muted-foreground">
-            Simulated session
+          <span className="block truncate text-xs text-muted-foreground">
+            {user?.role ?? "Simulated session"}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -49,6 +58,17 @@ export function UserMenu() {
             <Settings aria-hidden="true" className="mr-2 size-4" />
             Settings
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onSelect={() => {
+            signOut();
+            router.replace("/login");
+          }}
+        >
+          <LogOut aria-hidden="true" className="mr-2 size-4" />
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

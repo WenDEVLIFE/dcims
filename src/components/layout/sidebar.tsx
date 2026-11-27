@@ -7,11 +7,13 @@ import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { DemoBadge } from "@/components/shared/demo-badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useSessionUser } from "@/stores/session-store";
 import { useSidebarCollapsed, useUiStore } from "@/stores/ui-store";
 
 export function Sidebar() {
   const collapsed = useSidebarCollapsed();
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
+  const sessionUser = useSessionUser();
 
   return (
     <aside
@@ -46,14 +48,14 @@ export function Sidebar() {
             aria-hidden="true"
             className="flex size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-xs font-semibold text-sidebar-accent-foreground"
           >
-            DU
+            {sessionUser?.initials ?? "DU"}
           </span>
           <div className={cn("min-w-0", collapsed && "sr-only")}>
             <p className="truncate text-sm font-medium text-sidebar-foreground">
-              Demo user
+              {sessionUser?.name ?? "Demo user"}
             </p>
             <p className="truncate text-xs text-sidebar-muted">
-              Simulated session
+              {sessionUser?.role ?? "Simulated session"}
             </p>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Header } from "@/components/layout/header";
+import { AuthGuard } from "@/components/layout/auth-guard";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { Sidebar } from "@/components/layout/sidebar";
 import { DensityProvider } from "@/components/shared/density-provider";
@@ -9,7 +10,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
-    <TooltipProvider delayDuration={300}>
+    <AuthGuard>
+      <TooltipProvider delayDuration={300}>
       <div className="flex min-h-dvh bg-background">
         <a
           href="#main-content"
@@ -28,6 +30,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </main>
         </div>
       </div>
-    </TooltipProvider>
+      </TooltipProvider>
+    </AuthGuard>
   );
 }

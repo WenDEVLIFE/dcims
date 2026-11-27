@@ -8,10 +8,28 @@ workflows, built with fictional data and running entirely in the browser.
 > LocalStorage, is not synchronised across devices, is not tamper-proof, and
 > access control is simulated. Do not enter real business information.
 
+## Signing in
+
+The app opens on `/login`, which is a **simulated sign-in**, not authentication.
+Four demo accounts are published on the screen and can be clicked to fill the
+form:
+
+| Role | Email | Password |
+|---|---|---|
+| Warehouse supervisor | `warehouse@dcims.example` | `dcims2026` |
+| Procurement officer | `procurement@dcims.example` | `dcims2026` |
+| Project engineer | `engineer@dcims.example` | `dcims2026` |
+| Inventory clerk | `clerk@dcims.example` | `dcims2026` |
+
+Signing in switches the displayed identity and the name recorded on new activity
+entries. It grants no permissions: every role can open every module, and clearing
+site data bypasses the screen entirely. Sign out from the account menu.
+
 ## Features
 
 | Module | What it does |
 |---|---|
+| Sign-in (simulated) | Four published demo roles, role switching, sign-out — not authentication |
 | Dashboard | KPIs, movement/valuation charts, low-stock and activity feeds — all derived from records |
 | Materials | Catalogue with weighted-average costing, filters, CSV export, archive guard |
 | Categories | Grouping with derived material counts and inventory value |
@@ -107,6 +125,9 @@ docs/               project specification, theme, typography, task tracker
 
 ## Known limitations
 
+- Sign-in is simulated with published credentials; it is a role switch, not
+  authentication, and it enforces nothing. Clearing site data or editing
+  LocalStorage bypasses it.
 - Single-user and offline-by-design; no accounts, roles, or sharing.
 - Access control is simulated and grants nothing.
 - Inventory costing uses one weighted-average cost per warehouse, not per batch.

@@ -1587,6 +1587,21 @@ Implementation notes:
 - About states the stack, locale, fictional-data policy, and the demonstration
   disclaimer required by the project rules.
 
+Approved addition (2026-11-27): simulated sign-in.
+
+At the owner's explicit request, `/login` was added with four demo accounts, one
+per role. It is a role switch, not authentication:
+
+- Credentials are published on the login screen and stored in
+  `src/constants/demo-accounts.ts`; there is no server, hashing, or session token.
+- `useSessionStore` keeps the selected identity in LocalStorage, and the
+  dashboard layout redirects to `/login` when it is empty — a convenience guard,
+  not access control. Reading or clearing site data bypasses it.
+- Signing in updates the demo user, so activity entries record the active role,
+  and sign-out returns to `/login`.
+- The specification's prohibition on real authentication remains in force; this
+  addition does not claim otherwise anywhere in the interface.
+
 ### Acceptance Criteria
 
 - Settings persist after browser refresh.

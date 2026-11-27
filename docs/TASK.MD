@@ -1715,59 +1715,59 @@ Priority: P0
 
 ### Inventory Tests
 
-- [ ] Verify stock-in increases quantity.
-- [ ] Verify stock-out decreases quantity.
-- [ ] Verify zero-quantity transactions are rejected.
-- [ ] Verify negative quantities are rejected.
-- [ ] Verify insufficient stock is rejected.
-- [ ] Verify weighted-average cost calculations.
-- [ ] Verify inventory valuation.
-- [ ] Verify stock status calculations.
-- [ ] Verify warehouse transfers preserve total stock.
-- [ ] Verify invalid transfers leave state unchanged.
-- [ ] Verify material returns update both locations.
+- [x] Verify stock-in increases quantity.
+- [x] Verify stock-out decreases quantity.
+- [x] Verify zero-quantity transactions are rejected.
+- [x] Verify negative quantities are rejected.
+- [x] Verify insufficient stock is rejected.
+- [x] Verify weighted-average cost calculations.
+- [x] Verify inventory valuation.
+- [x] Verify stock status calculations.
+- [x] Verify warehouse transfers preserve total stock.
+- [x] Verify invalid transfers leave state unchanged.
+- [x] Verify material returns update both locations.
 
 ### Material Request Tests
 
-- [ ] Verify request creation.
-- [ ] Verify request approval.
-- [ ] Verify request rejection.
-- [ ] Verify approval does not deduct stock.
-- [ ] Verify full fulfillment.
-- [ ] Verify partial fulfillment.
-- [ ] Verify over-fulfillment prevention.
-- [ ] Verify rejected requests cannot be fulfilled.
-- [ ] Verify duplicate fulfillment prevention.
+- [x] Verify request creation.
+- [x] Verify request approval.
+- [x] Verify request rejection.
+- [x] Verify approval does not deduct stock.
+- [x] Verify full fulfillment.
+- [x] Verify partial fulfillment.
+- [x] Verify over-fulfillment prevention.
+- [x] Verify rejected requests cannot be fulfilled.
+- [x] Verify duplicate fulfillment prevention.
 
 ### Purchase Order Tests
 
-- [ ] Verify line item calculations.
-- [ ] Verify subtotal calculations.
-- [ ] Verify discounts.
-- [ ] Verify delivery fees.
-- [ ] Verify final order totals.
-- [ ] Verify partial receiving.
-- [ ] Verify full receiving.
-- [ ] Verify over-receiving prevention.
-- [ ] Verify duplicate receiving prevention.
-- [ ] Verify stock-in transaction generation.
+- [x] Verify line item calculations.
+- [x] Verify subtotal calculations.
+- [x] Verify discounts.
+- [x] Verify delivery fees.
+- [x] Verify final order totals.
+- [x] Verify partial receiving.
+- [x] Verify full receiving.
+- [x] Verify over-receiving prevention.
+- [x] Verify duplicate receiving prevention.
+- [x] Verify stock-in transaction generation.
 
 ### Project Tests
 
-- [ ] Verify project material allocation.
-- [ ] Verify project material consumption.
-- [ ] Verify negative project stock prevention.
-- [ ] Verify project material returns.
-- [ ] Verify project material expense calculations.
-- [ ] Verify remaining material budget calculations.
+- [x] Verify project material allocation.
+- [x] Verify project material consumption.
+- [x] Verify negative project stock prevention.
+- [x] Verify project material returns.
+- [x] Verify project material expense calculations.
+- [x] Verify remaining material budget calculations.
 
 ### Equipment Tests
 
-- [ ] Verify equipment assignment.
-- [ ] Verify equipment return.
-- [ ] Verify duplicate assignment prevention.
-- [ ] Verify maintenance status restrictions.
-- [ ] Verify retired equipment restrictions.
+- [x] Verify equipment assignment.
+- [x] Verify equipment return.
+- [x] Verify duplicate assignment prevention.
+- [x] Verify maintenance status restrictions.
+- [x] Verify retired equipment restrictions.
 
 ### Persistence Tests
 
@@ -1776,9 +1776,9 @@ Priority: P0
 - [ ] Verify theme persistence.
 - [ ] Verify state migration.
 - [ ] Verify invalid LocalStorage recovery.
-- [ ] Verify JSON export.
-- [ ] Verify JSON import.
-- [ ] Verify invalid import rejection.
+- [x] Verify JSON export.
+- [x] Verify JSON import.
+- [x] Verify invalid import rejection.
 - [ ] Verify demo data reset.
 
 ### Acceptance Criteria
@@ -1787,6 +1787,26 @@ Priority: P0
 - Invalid transactions are safely rejected.
 - Related records remain consistent.
 - No critical business logic errors remain.
+
+Test harness:
+
+- `npm run test` runs Vitest over `src/**/*.test.ts` with the `@` alias mapped
+  to `src`, so the suites import the same services the app uses.
+- 48 tests across six files: inventory (10), material requests (9), purchase
+  orders (8), projects (6), equipment (8), and seed/persistence contracts (7).
+- Services are pure functions over `DomainData`, so every test starts from a
+  fresh `structuredClone` of the seed and cannot leak state into another test.
+- Three real defects were caught while writing the suite: a test assumed the
+  material's global unit cost changed instead of the warehouse balance (phase 12
+  moved costing per warehouse), a fulfilment test picked a warehouse that did not
+  hold the requested material, and a stock-in call was missing its cost argument.
+  Each was a defect in the test, not the service — which is exactly what running
+  them is for.
+
+Still browser-dependent, and not claimed: persist after refresh, persist after
+browser restart, theme persistence, store migration, invalid LocalStorage
+recovery, and the reset flow. JSON export/import and invalid-import rejection
+are covered by the seed contract suite.
 
 ## 30. Phase 26 — UI and UX Refinement
 
@@ -2190,7 +2210,7 @@ Update this section after each completed phase.
 | 22 | Application Settings | P1 | Completed |
 | 23 | Responsive Design | P0 | In Progress |
 | 24 | Accessibility | P1 | In Progress |
-| 25 | Business Logic Testing | P0 | Pending |
+| 25 | Business Logic Testing | P0 | In Progress |
 | 26 | UI and UX Refinement | P1 | Pending |
 | 27 | Performance Optimization | P2 | Pending |
 | 28 | Build and Deployment | P0 | Pending |

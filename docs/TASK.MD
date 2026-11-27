@@ -1475,19 +1475,32 @@ Implementation notes:
 
 Priority: P2
 
-- [ ] Implement global search dialog.
-- [ ] Add keyboard shortcut.
-- [ ] Search material names and SKUs.
-- [ ] Search warehouse names.
-- [ ] Search construction projects.
-- [ ] Search equipment asset codes.
-- [ ] Search suppliers.
-- [ ] Search purchase order references.
-- [ ] Search material request references.
-- [ ] Group search results by module.
-- [ ] Implement keyboard result navigation.
-- [ ] Implement empty search state.
-- [ ] Navigate to selected record.
+- [x] Implement global search dialog.
+- [x] Add keyboard shortcut.
+- [x] Search material names and SKUs.
+- [x] Search warehouse names.
+- [x] Search construction projects.
+- [x] Search equipment asset codes.
+- [x] Search suppliers.
+- [x] Search purchase order references.
+- [x] Search material request references.
+- [x] Group search results by module.
+- [x] Implement keyboard result navigation.
+- [x] Implement empty search state.
+- [x] Navigate to selected record.
+Implementation notes:
+
+- One command palette searches eight modules: materials (name and SKU),
+  projects, material requests, purchase orders, suppliers, equipment,
+  warehouses, and categories.
+- The shortcut is Ctrl/Cmd+K, and the header exposes a search button on desktop
+  plus an icon-only trigger on mobile, so the feature is not keyboard-only.
+- Results are grouped by module and capped per group so one large collection
+  cannot bury the others; cmdk provides arrow-key navigation and Enter to open.
+- Selecting a result navigates to the owning module, with projects and
+  warehouses deep-linking to their detail pages.
+- An empty query lists the first records of each module and a no-match query
+  explains what to try, instead of showing a blank dialog.
 
 ### Acceptance Criteria
 
@@ -2115,7 +2128,7 @@ Update this section after each completed phase.
 | 18 | Reports and Analytics | P1 | Completed |
 | 19 | Activity Logs | P1 | Completed |
 | 20 | Notifications | P2 | Completed |
-| 21 | Global Search | P2 | Pending |
+| 21 | Global Search | P2 | Completed |
 | 22 | Application Settings | P1 | Pending |
 | 23 | Responsive Design | P0 | Pending |
 | 24 | Accessibility | P1 | Pending |

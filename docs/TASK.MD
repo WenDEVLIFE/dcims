@@ -1919,52 +1919,52 @@ Priority: P0
 
 ### Code Quality
 
-- [ ] Run ESLint.
-- [ ] Resolve lint errors.
-- [ ] Run TypeScript type checking.
-- [ ] Resolve TypeScript errors.
-- [ ] Remove unused variables.
-- [ ] Remove unused imports.
-- [ ] Remove debugging console logs.
-- [ ] Verify all application routes.
-- [ ] Verify no broken asset references.
+- [x] Run ESLint.
+- [x] Resolve lint errors.
+- [x] Run TypeScript type checking.
+- [x] Resolve TypeScript errors.
+- [x] Remove unused variables.
+- [x] Remove unused imports.
+- [x] Remove debugging console logs.
+- [x] Verify all application routes.
+- [x] Verify no broken asset references.
 
 ### Production Build
 
-- [ ] Run npm run build.
-- [ ] Resolve production build errors.
-- [ ] Run npm run start.
-- [ ] Test production application locally.
-- [ ] Verify production metadata.
-- [ ] Verify production favicon.
+- [x] Run npm run build.
+- [x] Resolve production build errors.
+- [x] Run npm run start.
+- [x] Test production application locally.
+- [x] Verify production metadata.
+- [x] Verify production favicon.
 - [ ] Verify production theme behavior.
 - [ ] Verify production LocalStorage persistence.
 
 ### Deployment
 
-- [ ] Prepare Git repository.
-- [ ] Commit completed implementation.
+- [x] Prepare Git repository.
+- [x] Commit completed implementation.
 - [ ] Configure Vercel project.
 - [ ] Deploy production application.
 - [ ] Verify deployed website.
 - [ ] Test deployed navigation.
 - [ ] Test deployed inventory transactions.
 - [ ] Test deployed responsive layouts.
-- [ ] Verify no environment variables are required
+- [x] Verify no environment variables are required
       for core application functionality.
 
 ### Documentation
 
-- [ ] Update README.md.
-- [ ] Add project overview.
-- [ ] Add technology stack.
-- [ ] Add installation instructions.
-- [ ] Add development commands.
-- [ ] Add feature summary.
+- [x] Update README.md.
+- [x] Add project overview.
+- [x] Add technology stack.
+- [x] Add installation instructions.
+- [x] Add development commands.
+- [x] Add feature summary.
 - [ ] Add application screenshots.
 - [ ] Add deployment URL after deployment.
-- [ ] Add frontend-only architecture explanation.
-- [ ] Add demonstration limitations.
+- [x] Add frontend-only architecture explanation.
+- [x] Add demonstration limitations.
 
 ### Acceptance Criteria
 
@@ -1973,6 +1973,35 @@ Priority: P0
 - All critical workflows function after deployment.
 - No backend configuration is required.
 - Documentation accurately describes the application.
+
+Build verification notes:
+
+- ESLint, `tsc --noEmit`, the 48-test Vitest suite, and `next build` all pass.
+- No debugging `console.*` statements remain in application code; the only
+  logging is the dev-only seed-integrity guard in `src/instrumentation.ts`,
+  which returns early outside development.
+- Production server started on port 3005 and every route was requested:
+  `/` returns 307 to `/dashboard`, and all thirteen module routes plus the two
+  detail routes return 200.
+- Production metadata resolves to `<title>DCIMS</title>` and the favicon is
+  served from `icon.png`.
+- No `process.env` reads exist in application code, so no environment variables
+  are required to run the app.
+
+Blocked, and deliberately not done:
+
+- **Deployment.** No Vercel project is configured and no deploy has been
+  attempted, because publishing to an external account requires the owner's
+  explicit authorisation. The repository is pushed and build-ready on
+  `typography/manrope-default`.
+- **Deployed-site checks** (navigation, transactions, responsive layout on the
+  deployed URL) depend on that deployment.
+- **Screenshots** in the README need a browser session to capture.
+
+Tracker note: the progress table remains the source of truth. Phases 23, 24, 26,
+and 27 are marked In Progress because their acceptance depends on browser
+verification that has not been performed; the code-level work for each is
+described in its section.
 
 ## 33. Recommended Project Structure
 
@@ -2258,7 +2287,7 @@ Update this section after each completed phase.
 | 25 | Business Logic Testing | P0 | In Progress |
 | 26 | UI and UX Refinement | P1 | In Progress |
 | 27 | Performance Optimization | P2 | In Progress |
-| 28 | Build and Deployment | P0 | Pending |
+| 28 | Build and Deployment | P0 | In Progress |
 
 Allowed task statuses:
 

@@ -234,6 +234,8 @@ export interface MaterialRequest {
   items: MaterialRequestItem[];
   notes?: string;
   requestedAt: ISOTimestamp;
+  /** Calendar date the site needs the material by. */
+  requiredDate?: ISODate;
   reviewedAt?: ISOTimestamp;
   reviewedBy?: string;
 }

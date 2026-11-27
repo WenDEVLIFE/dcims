@@ -1037,52 +1037,66 @@ Priority: P1
 
 ### Request Management
 
-- [ ] Create material requests page.
-- [ ] Create request summary cards.
-- [ ] Create material requests table.
-- [ ] Display request reference numbers.
-- [ ] Display project information.
-- [ ] Display request priority.
-- [ ] Display requested date.
-- [ ] Display required date.
-- [ ] Display request status.
+- [x] Create material requests page.
+- [x] Create request summary cards.
+- [x] Create material requests table.
+- [x] Display request reference numbers.
+- [x] Display project information.
+- [x] Display request priority.
+- [x] Display requested date.
+- [x] Display required date.
+- [x] Display request status.
 
 ### Request Creation
 
-- [ ] Create multi-item request form.
-- [ ] Select construction project.
-- [ ] Add requested materials.
-- [ ] Enter requested quantities.
-- [ ] Select request priority.
-- [ ] Enter required date.
-- [ ] Enter request remarks.
-- [ ] Validate request items.
-- [ ] Generate request reference number.
+- [x] Create multi-item request form.
+- [x] Select construction project.
+- [x] Add requested materials.
+- [x] Enter requested quantities.
+- [x] Select request priority.
+- [x] Enter required date.
+- [x] Enter request remarks.
+- [x] Validate request items.
+- [x] Generate request reference number.
 
 ### Approval Workflow
 
-- [ ] Implement request approval.
-- [ ] Implement request rejection.
-- [ ] Require rejection reason.
-- [ ] Implement request cancellation.
-- [ ] Enforce valid status transitions.
-- [ ] Prevent stock deduction during approval.
+- [x] Implement request approval.
+- [x] Implement request rejection.
+- [x] Require rejection reason.
+- [x] Implement request cancellation.
+- [x] Enforce valid status transitions.
+- [x] Prevent stock deduction during approval.
 
 ### Fulfillment Workflow
 
-- [ ] Select approved request.
-- [ ] Select source warehouse.
-- [ ] Display available warehouse stock.
-- [ ] Enter fulfillment quantities.
-- [ ] Validate requested remaining quantities.
-- [ ] Validate warehouse stock availability.
-- [ ] Deduct warehouse inventory.
-- [ ] Increase project inventory.
-- [ ] Record stock-out transaction.
-- [ ] Update fulfilled quantities.
-- [ ] Support partial fulfillment.
-- [ ] Update request status automatically.
-- [ ] Generate activity logs and notifications.
+- [x] Select approved request.
+- [x] Select source warehouse.
+- [x] Display available warehouse stock.
+- [x] Enter fulfillment quantities.
+- [x] Validate requested remaining quantities.
+- [x] Validate warehouse stock availability.
+- [x] Deduct warehouse inventory.
+- [x] Increase project inventory.
+- [x] Record stock-out transaction.
+- [x] Update fulfilled quantities.
+- [x] Support partial fulfillment.
+- [x] Update request status automatically.
+- [x] Generate activity logs and notifications.
+
+Implementation notes:
+
+- `MaterialRequest` gained `requiredDate`; the create form requires it and the
+  table shows it, while older saved requests simply render a dash.
+- Cancellation is a new domain action and is limited to pending or approved
+  requests. A partially fulfilled request cannot be cancelled because the
+  released stock already sits on the project site.
+- Approval still never touches stock. Only fulfilment deducts, and it validates
+  both the remaining approved quantity and the selected warehouse balance before
+  releasing anything.
+- Fulfilment writes a stock-out movement per line, increases project on-site
+  allocation, and sets the request to fulfilled or partially fulfilled based on
+  the remaining lines.
 
 ### Acceptance Criteria
 
@@ -2009,7 +2023,7 @@ Update this section after each completed phase.
 | 11 | Warehouse Management | P0 | Completed |
 | 12 | Stock Movements | P0 | Completed |
 | 13 | Construction Projects | P1 | Completed |
-| 14 | Material Requests | P1 | Pending |
+| 14 | Material Requests | P1 | Completed |
 | 15 | Equipment Management | P1 | Pending |
 | 16 | Supplier Management | P1 | Pending |
 | 17 | Purchase Orders | P1 | Pending |

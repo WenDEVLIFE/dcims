@@ -298,6 +298,7 @@ export function buildInventorySeed(): InventorySeed {
       items,
       notes: plan.status === "rejected" ? "Duplicated by a later request." : undefined,
       requestedAt,
+      requiredDate: isoAt(58 + index * 3 + 14, 0).slice(0, 10),
       reviewedAt,
       reviewedBy: reviewedAt ? "Warehouse supervisor" : undefined,
     };

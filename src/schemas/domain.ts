@@ -176,6 +176,7 @@ export const materialRequestSchema = z.object({
   items: z.array(materialRequestItemSchema).min(1, "Add at least one material"),
   notes: z.string().max(500).optional(),
   requestedAt: timestampSchema,
+  requiredDate: isoDateSchema.optional(),
   reviewedAt: timestampSchema.optional(),
   reviewedBy: z.string().min(1).optional(),
 });

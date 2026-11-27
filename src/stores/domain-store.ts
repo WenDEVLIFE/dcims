@@ -102,6 +102,7 @@ interface DomainStore extends DomainData {
   createMaterialRequest: (input: requestService.CreateRequestInput) => DomainResult<void>;
   approveMaterialRequest: (id: string) => DomainResult<void>;
   rejectMaterialRequest: (id: string, reason: string) => DomainResult<void>;
+  cancelMaterialRequest: (id: string) => DomainResult<void>;
   fulfillMaterialRequest: (input: requestService.FulfillRequestInput) => DomainResult<void>;
 
   // Procurement
@@ -221,6 +222,8 @@ export const useDomainStore = create<DomainStore>()(
           commit(requestService.approveMaterialRequest(get(), id, context())),
         rejectMaterialRequest: (id, reason) =>
           commit(requestService.rejectMaterialRequest(get(), id, reason, context())),
+        cancelMaterialRequest: (id) =>
+          commit(requestService.cancelMaterialRequest(get(), id, context())),
         fulfillMaterialRequest: (input) =>
           commit(requestService.fulfillMaterialRequest(get(), input, context())),
 

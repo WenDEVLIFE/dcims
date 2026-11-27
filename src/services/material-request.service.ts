@@ -29,6 +29,7 @@ export interface CreateRequestInput {
   priority: MaterialRequest["priority"];
   items: Array<{ materialId: string; requestedQuantity: number }>;
   notes?: string;
+  requiredDate?: string;
 }
 
 export function createMaterialRequest(
@@ -73,6 +74,7 @@ export function createMaterialRequest(
     items,
     notes: input.notes,
     requestedAt: ctx.now,
+    requiredDate: input.requiredDate,
   };
 
   return succeed({
@@ -165,8 +167,50 @@ export function rejectMaterialRequest(
   });
 }
 
-export interface FulfillRequestInput {
-  requestId: string;
+/**
+ * Cancels a request that has not released stock yet. Once any quantity has
+ * been fulfilled the on-site allocation exists, so cancelling would orphan it.
+ */
+export function cancelMaterialRequest(
+  data: DomainData,
+  requestId: string,
+  ctx: OperationContext,
+): DomainResult<DomainData> {
+  const request = data.materialRequests.find((entry) => entry.id === requestId);
+  if (!request) return fail("Request not found");
+
+  if (!["pending", "approved"].includes(request.status)) {
+    return fail(
+      request.status === "partially-fulfilled"
+        ? "Partially fulfilled requests cannot be cancelled; the released stock is already on site"
+        : `Requests in status ${request.status} cannot be cancelled`,
+    );
+  }
+
+  const updated: MaterialRequest = {
+    ...request,
+    status: "cancelled",
+    reviewedAt: ctx.now,
+    reviewedBy: ctx.actor,
+  };
+
+  return succeed({
+    ...data,
+    materialRequests: data.materialRequests.map((entry) =>
+      entry.id === requestId ? updated : entry,
+    ),
+    activityLogs: appendActivity(data, {
+      action: "Material request cancelled",
+      entityType: "material-request",
+      entityId: request.id,
+      description: `${request.reference} cancelled before fulfilment.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
+  });
+}
+
+export interface FulfillRequestInput {  requestId: string;
   warehouseId: string;
   /** Optional per-item quantities; omitted items are fulfilled as far as stock allows. */
   quantities?: Record<string, number>;

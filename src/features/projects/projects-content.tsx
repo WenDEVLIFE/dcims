@@ -56,14 +56,19 @@ export function ProjectsContent() {
   }, [overview, search, statusFilter]);
 
   const summary = useMemo(() => {
-    const active = state.projects.filter((project) => project.status === "active").length;
-    const budget = state.projects.reduce((total, project) => total + project.budgetCentavos, 0);
-    const expense = state.projects.reduce(
-      (total, project) => total + projectOverview(state).find((entry) => entry.project.id === project.id)!.expenseCentavos,
+    const active = overview.filter((entry) => entry.project.status === "active").length;
+    const budget = overview.reduce(
+      (total, entry) => total + entry.project.budgetCentavos,
+      0,
+    );
+    // Reuses the rows already derived once; previously this called
+    // projectOverview() again for every project, which is quadratic.
+    const expense = overview.reduce(
+      (total, entry) => total + entry.expenseCentavos,
       0,
     );
     return { active, budget, expense };
-  }, [state]);
+  }, [overview]);
 
   function submitProject(values: ProjectInputValues) {
     const result = editing

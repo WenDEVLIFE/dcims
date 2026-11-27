@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore, useState } from "react";
+import { useMemo, useSyncExternalStore, useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { ArrowLeftRight, ClipboardPlus, PackagePlus } from "lucide-react";
 
@@ -62,6 +62,45 @@ export function DashboardContent() {
   );
   const [range, setRange] = useState<DateRange | undefined>(undefined);
 
+  // Declared before any early return so the hook order is stable across the
+  // skeleton, empty, and loaded states.
+  const derived = useMemo(() => {
+    if (!mounted) return null;
+
+    const filtered = {
+      ...state,
+      stockMovements: filterByDateRange(
+        state.stockMovements,
+        (movement) => movement.createdAt,
+        range,
+      ),
+      purchaseOrders: filterByDateRange(
+        state.purchaseOrders,
+        (order) => order.createdAt,
+        range,
+      ),
+      activityLogs: filterByDateRange(
+        state.activityLogs,
+        (log) => log.createdAt,
+        range,
+      ),
+    };
+
+    return {
+      filtered,
+      stats: selectDashboardStats(state),
+      movementSeries: monthlyMovementCounts(filtered),
+      categorySeries: inventoryValueByCategory(state),
+      warehouseSeries: inventoryValueByWarehouse(state),
+      projectSeries: projectExpenditure(state),
+      procurementSeries: procurementTrend(filtered),
+      lowStock: lowStockMaterials(state).map((material) => ({
+        material,
+        quantity: totalQuantityByMaterial(state, material.id),
+      })),
+    };
+  }, [mounted, state, range]);
+
   const header = (
     <PageHeader
       title="Dashboard"
@@ -117,30 +156,12 @@ export function DashboardContent() {
     );
   }
 
-  const filtered = {
-    ...state,
-    stockMovements: filterByDateRange(
-      state.stockMovements,
-      (movement) => movement.createdAt,
-      range,
-    ),
-    purchaseOrders: filterByDateRange(
-      state.purchaseOrders,
-      (order) => order.createdAt,
-      range,
-    ),
-    activityLogs: filterByDateRange(
-      state.activityLogs,
-      (log) => log.createdAt,
-      range,
-    ),
-  };
+  // One memo for every derived series. Without this, toggling a theme or
+  // marking a notification read recomputed all five charts and the KPI set.
+  // Unreachable after the guards above, but it keeps the type honest.
+  if (!derived) return null;
 
-  const stats = selectDashboardStats(state);
-  const lowStock = lowStockMaterials(state).map((material) => ({
-    material,
-    quantity: totalQuantityByMaterial(state, material.id),
-  }));
+  const { filtered, stats, lowStock } = derived;
 
   return (
     <PageContainer>
@@ -153,12 +174,12 @@ export function DashboardContent() {
         <KpiGrid stats={stats} />
 
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          <MonthlyMovementChart data={monthlyMovementCounts(filtered)} />
-          <CategoryValueChart data={inventoryValueByCategory(state)} />
-          <WarehouseValueChart data={inventoryValueByWarehouse(state)} />
-          <ProjectExpenditureChart data={projectExpenditure(state)} />
+          <MonthlyMovementChart data={derived.movementSeries} />
+          <CategoryValueChart data={derived.categorySeries} />
+          <WarehouseValueChart data={derived.warehouseSeries} />
+          <ProjectExpenditureChart data={derived.projectSeries} />
           <div className="xl:col-span-2">
-            <ProcurementTrendChart data={procurementTrend(filtered)} />
+            <ProcurementTrendChart data={derived.procurementSeries} />
           </div>
         </div>
 

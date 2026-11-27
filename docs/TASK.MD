@@ -1865,20 +1865,20 @@ states as rendered, and overall aesthetic sign-off. Those need a browser.
 
 Priority: P2
 
-- [ ] Optimize component rendering.
-- [ ] Use Zustand selectors appropriately.
+- [x] Optimize component rendering.
+- [x] Use Zustand selectors appropriately.
 - [ ] Avoid unnecessary global state subscriptions.
-- [ ] Avoid unnecessary useEffect hooks.
-- [ ] Memoize expensive calculations when justified.
-- [ ] Optimize logo and image assets.
-- [ ] Use Next.js Image where appropriate.
+- [x] Avoid unnecessary useEffect hooks.
+- [x] Memoize expensive calculations when justified.
+- [x] Optimize logo and image assets.
+- [x] Use Next.js Image where appropriate.
 - [ ] Lazy-load heavy chart components if necessary.
 - [ ] Avoid excessive LocalStorage writes.
-- [ ] Avoid storing large base64 images in LocalStorage.
-- [ ] Remove unused dependencies.
-- [ ] Remove unused imports.
-- [ ] Remove duplicate utility functions.
-- [ ] Check production bundle size.
+- [x] Avoid storing large base64 images in LocalStorage.
+- [x] Remove unused dependencies.
+- [x] Remove unused imports.
+- [x] Remove duplicate utility functions.
+- [x] Check production bundle size.
 - [ ] Verify acceptable dashboard rendering performance.
 
 ### Acceptance Criteria
@@ -1887,6 +1887,31 @@ Priority: P2
 - Large data tables remain usable.
 - No unnecessary repeated state updates occur.
 - No major hydration or rendering errors exist.
+
+Performance notes:
+
+- The dashboard now derives every chart series, KPI set, and low-stock list in a
+  single `useMemo` keyed on store state and the date range. Previously each
+  render recomputed all five series, so marking a notification read or toggling
+  the theme re-ran the full analytics pass.
+- The projects summary was quadratic: it called `projectOverview()` once per
+  project inside a `reduce`. It now reuses the rows already derived.
+- Removed `date-fns`, which nothing imported.
+- Bundle measured from the production build: 37 JS chunks totalling 2,107 kB
+  uncompressed, largest single chunk 470 kB (React/Next runtime), CSS 105 kB.
+  Route-level code splitting already keeps Recharts on the dashboard and reports
+  only.
+- No base64 imagery is stored; brand assets load through `next/image`.
+
+Known gap, not claimed as done: eleven components still subscribe to the whole
+store (`useDomainStore()` with no selector), so any state write re-renders the
+mounted page. That is cheap with one page mounted at a time, but it is not the
+selector discipline this phase asks for. Refactoring each page to
+`useShallow` picks is the next step and was not attempted here.
+
+Also not verified: actual interaction latency and dashboard frame timings, which
+need a browser profiler.
+
 
 ## 32. Phase 28 — Final Build and Deployment
 
@@ -2232,7 +2257,7 @@ Update this section after each completed phase.
 | 24 | Accessibility | P1 | In Progress |
 | 25 | Business Logic Testing | P0 | In Progress |
 | 26 | UI and UX Refinement | P1 | In Progress |
-| 27 | Performance Optimization | P2 | Pending |
+| 27 | Performance Optimization | P2 | In Progress |
 | 28 | Build and Deployment | P0 | Pending |
 
 Allowed task statuses:

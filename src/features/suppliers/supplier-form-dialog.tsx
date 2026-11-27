@@ -86,7 +86,7 @@ function SupplierFormContent({
           <DialogDescription>
             {supplier
               ? `Update ${supplier.code}. Deactivating a supplier blocks new purchase orders but keeps its history.`
-              : "Records are fictional demo data; do not enter real contact details."}
+              : "Contact details are used only inside this application."}
           </DialogDescription>
         </DialogHeader>
 

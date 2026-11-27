@@ -270,7 +270,7 @@ export function ReportsContent() {
                 Generated {formatDate(generatedAt)} · {filtersSummary()}
               </p>
               <p className="mt-1 text-[0.6875rem]">
-                Portfolio demonstration. Data is simulated and stored in this browser.
+                Records are stored in this browser.
               </p>
             </div>
 

@@ -70,7 +70,7 @@ export function SettingsContent() {
   if (!mounted) {
     return (
       <PageContainer>
-        <PageHeader title="Settings" description="Application preferences and demo data." />
+        <PageHeader title="Settings" description="Application preferences and stored data." />
         <div className="mt-6">
           <LoadingState rows={6} />
         </div>
@@ -102,12 +102,12 @@ export function SettingsContent() {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `dcims-demo-data-${data.exportedAt.slice(0, 10)}.json`;
+    anchor.download = `dcims-data-${data.exportedAt.slice(0, 10)}.json`;
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
     URL.revokeObjectURL(url);
-    toast.success("Demo data exported");
+    toast.success("Data exported");
   }
 
   async function importJson(file: File) {
@@ -118,14 +118,14 @@ export function SettingsContent() {
       return;
     }
     setDraft(state.settings);
-    toast.success("Demo data imported");
+    toast.success("Data imported");
   }
 
   return (
     <PageContainer>
       <PageHeader
         title="Settings"
-        description="Company profile, appearance, inventory defaults, notifications, and demo data."
+        description="Company profile, appearance, inventory defaults, notifications, and stored data."
       />
 
       <Tabs defaultValue="company" className="mt-6">
@@ -135,7 +135,7 @@ export function SettingsContent() {
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
           <TabsTrigger value="inventory">Inventory</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="data">Demo data</TabsTrigger>
+          <TabsTrigger value="data">Data</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
         </TabsList>
 
@@ -208,8 +208,8 @@ export function SettingsContent() {
         <TabsContent value="profile" className="mt-4">
           <Card className="gap-3 p-4">
             <p className="text-[0.8125rem] text-muted-foreground">
-              The demo user is simulated. Roles are presentation-only and grant no access
-              control.
+              This account supplies the name shown in the header and recorded on new
+              activity entries.
             </p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
@@ -495,7 +495,7 @@ export function SettingsContent() {
               </p>
               <Button type="button" size="sm" variant="outline" className="mt-2" onClick={exportJson}>
                 <Download aria-hidden="true" />
-                Export demo data
+                Export data
               </Button>
             </div>
 
@@ -541,7 +541,7 @@ export function SettingsContent() {
                 onClick={() => setResetOpen(true)}
               >
                 <RotateCcw aria-hidden="true" />
-                Reset demo data
+                Reset data
               </Button>
             </div>
 
@@ -570,9 +570,9 @@ export function SettingsContent() {
             </div>
 
             <p className="text-[0.8125rem] leading-5 text-muted-foreground">
-              A frontend-only construction inventory demonstration covering materials,
-              warehouses, projects, procurement, and equipment using simulated records
-              stored in this browser.
+              Construction inventory, warehouse, procurement, and equipment management
+              covering materials, projects, and supplier orders. Records are stored in
+              this browser.
             </p>
 
             <dl className="grid grid-cols-1 gap-2 border-t border-border pt-3 text-[0.8125rem] sm:grid-cols-2">
@@ -590,14 +590,10 @@ export function SettingsContent() {
               </div>
               <div>
                 <dt className="text-xs text-muted-foreground">Data</dt>
-                <dd>Fictional; no external services</dd>
+                <dd>Local; no external services</dd>
               </div>
             </dl>
 
-            <p className="rounded-md border border-warning/30 bg-warning-background px-3 py-2 text-[0.8125rem] text-warning-foreground">
-              Portfolio demonstration only. Not a production system: data is local to this
-              browser, not synchronised, not tamper-proof, and access control is simulated.
-            </p>
           </Card>
         </TabsContent>
       </Tabs>
@@ -605,7 +601,7 @@ export function SettingsContent() {
       <ConfirmDialog
         open={resetOpen}
         onOpenChange={setResetOpen}
-        title="Reset demo data"
+        title="Reset data"
         description="Every change made in this browser will be replaced by the original seed dataset. Export a backup first if you want to keep it."
         confirmLabel="Reset everything"
         destructive
@@ -613,7 +609,7 @@ export function SettingsContent() {
           state.resetDemoData();
           setDraft(state.exportDemoData().settings);
           setResetOpen(false);
-          toast.success("Demo data reset to seed");
+          toast.success("Data reset to the original records");
         }}
       />
     </PageContainer>

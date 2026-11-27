@@ -10,7 +10,7 @@ import type { InventorySeed } from "@/data/inventory";
  * never describe an operation the dataset does not contain.
  */
 
-const PERFORMER = "Demo user";
+const PERFORMER = "System";
 
 export function buildActivityLogs(seed: InventorySeed): ActivityLog[] {
   const logs: ActivityLog[] = [];

@@ -34,7 +34,7 @@ export function LoginForm() {
     const success = signIn(email, password);
     if (!success) {
       setSubmitting(false);
-      setError("That email and password do not match a demo account.");
+      setError("That email and password do not match an account.");
       return;
     }
 
@@ -95,16 +95,16 @@ export function LoginForm() {
 
         <Button type="submit" disabled={submitting} className="gap-2">
           <LockKeyhole aria-hidden="true" />
-          Sign in to the demo
+          Sign in
         </Button>
       </form>
 
       <div className="rounded-card border border-border bg-card p-3">
         <p className="text-xs font-semibold tracking-[0.06em] text-muted-foreground uppercase">
-          Demo accounts
+          Test accounts
         </p>
         <p className="mt-1 text-[0.8125rem] text-muted-foreground">
-          Pick a role to fill the form. Every account uses the password{" "}
+          Pick an account to fill the form. Every account uses the password{" "}
           <span className="font-mono text-foreground">{DEMO_PASSWORD}</span>.
         </p>
 

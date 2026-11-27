@@ -148,8 +148,8 @@ export function DashboardContent() {
         {header}
         <div className="mt-6">
           <EmptyState
-            title="No demo data loaded"
-            description="Reset the demo dataset from Settings to restore inventory, projects, and procurement records."
+            title="No data loaded"
+            description="Reset the dataset from Settings to restore inventory, projects, and procurement records."
           />
         </div>
       </PageContainer>

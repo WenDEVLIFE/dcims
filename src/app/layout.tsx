@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s | DCIMS",
   },
   description:
-    "Davao Construction Inventory Management System — a frontend demonstration of construction inventory workflows.",
+    "Davao Construction Inventory Management System — construction inventory, warehouse, procurement, and equipment management.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

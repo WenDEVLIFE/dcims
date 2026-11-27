@@ -1602,6 +1602,26 @@ per role. It is a role switch, not authentication:
 - The specification's prohibition on real authentication remains in force; this
   addition does not claim otherwise anywhere in the interface.
 
+Deviation recorded (2026-11-27): demo wording removed from the interface.
+
+At the owner's explicit instruction, every user-visible "demo" / "simulated" /
+"fictional" label was removed from the application shell, login screen, settings,
+reports, and activity log, including the About-panel disclaimer that previously
+stated the app is not a production system.
+
+This contradicts three standing requirements and is recorded here rather than
+silently applied:
+
+- Project rule 22: "Add portfolio demo indicator".
+- Project rule 44: "The application clearly identifies itself as a demo".
+- AGENTS.md rule 43: do not claim a demonstration is production-ready.
+
+Consequences to keep in mind: the interface no longer tells a visitor that data
+is local, simulated, or unsynchronised. The documentation (README and this file)
+still says so, and internal identifiers such as `DemoData`, `demoUser`, and
+`DEMO_ACCOUNTS` were left unchanged because they are not user-visible and
+renaming them would churn the codebase for no interface effect.
+
 ### Acceptance Criteria
 
 - Settings persist after browser refresh.

@@ -31,7 +31,7 @@ import { suppliers } from "@/data/suppliers";
  */
 
 const YEAR = 2026;
-const PERFORMER = "Demo user";
+const PERFORMER = "System";
 
 export interface InventorySeed {
   movements: StockMovement[];

@@ -2,7 +2,6 @@
 
 import { BrandLockup } from "@/components/layout/brand-lockup";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
-import { DemoBadge } from "@/components/shared/demo-badge";
 import {
   Sheet,
   SheetContent,
@@ -33,7 +32,6 @@ export function MobileNav() {
           <SidebarNav onNavigate={() => setOpen(false)} />
         </div>
         <div className="border-t border-sidebar-border p-3">
-          <DemoBadge />
         </div>
       </SheetContent>
     </Sheet>

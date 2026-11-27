@@ -4,7 +4,6 @@ import { BrandLockup } from "@/components/layout/brand-lockup";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 import { SidebarNav } from "@/components/layout/sidebar-nav";
-import { DemoBadge } from "@/components/shared/demo-badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSessionUser } from "@/stores/session-store";
@@ -37,7 +36,6 @@ export function Sidebar() {
       </div>
 
       <div className="flex flex-col gap-3 border-t border-sidebar-border p-3">
-        <DemoBadge collapsed={collapsed} />
         <div
           className={cn(
             "flex items-center gap-2.5 rounded-md px-1 py-1",
@@ -52,10 +50,10 @@ export function Sidebar() {
           </span>
           <div className={cn("min-w-0", collapsed && "sr-only")}>
             <p className="truncate text-sm font-medium text-sidebar-foreground">
-              {sessionUser?.name ?? "Demo user"}
+              {sessionUser?.name ?? "Account"}
             </p>
             <p className="truncate text-xs text-sidebar-muted">
-              {sessionUser?.role ?? "Simulated session"}
+              {sessionUser?.role ?? "Signed in"}
             </p>
           </div>
         </div>

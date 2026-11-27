@@ -185,7 +185,7 @@ export function SuppliersContent() {
   const header = (
     <PageHeader
       title="Suppliers"
-      description="Fictional Davao suppliers and the materials they have actually been ordered."
+      description="Davao suppliers and the materials they have actually been ordered."
       actions={
         <Button
           type="button"

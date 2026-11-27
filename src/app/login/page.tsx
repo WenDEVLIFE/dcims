@@ -3,7 +3,7 @@ import { Logo } from "@/components/shared/logo";
 
 export const metadata = {
   title: "Sign in",
-  description: "Sign in to the DCIMS portfolio demonstration with a demo account.",
+  description: "Sign in to DCIMS with one of the provided accounts.",
 };
 
 export default function LoginPage() {
@@ -17,14 +17,11 @@ export default function LoginPage() {
             Davao Construction Inventory Management System
           </h1>
           <p className="mt-3 text-sm leading-6 text-sidebar-muted">
-            A frontend-only demonstration of construction inventory, warehouse,
-            procurement, and equipment workflows using simulated data stored in this
-            browser.
+            Construction inventory, warehouse, procurement, and equipment
+            management for Davao-based operations.
           </p>
           <p className="mt-4 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-xs leading-5 text-sidebar-muted">
-            Sign-in is simulated. The accounts below are published credentials for
-            switching roles, not a security boundary — nothing here protects data or
-            enforces permissions.
+            Pick an account below to continue. Each role opens the same modules.
           </p>
         </div>
 
@@ -40,7 +37,7 @@ export default function LoginPage() {
           </div>
           <h2 className="text-xl leading-7 font-semibold">Sign in</h2>
           <p className="mt-1 mb-6 text-[0.8125rem] text-muted-foreground">
-            Choose a demo role to explore the modules as that persona.
+            Choose an account to continue.
           </p>
           <LoginForm />
         </div>

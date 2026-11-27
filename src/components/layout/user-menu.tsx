@@ -20,7 +20,7 @@ export function UserMenu() {
   const signOut = useSessionStore((state) => state.signOut);
   const router = useRouter();
 
-  const name = user?.name ?? "Demo user";
+  const name = user?.name ?? "Account";
   const initials = user?.initials ?? "DU";
 
   return (
@@ -49,7 +49,7 @@ export function UserMenu() {
             {name}
           </span>
           <span className="block truncate text-xs text-muted-foreground">
-            {user?.role ?? "Simulated session"}
+            {user?.role ?? "Signed in"}
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

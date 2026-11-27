@@ -16,7 +16,7 @@ export const settings: ApplicationSettings = {
   defaultReorderPoint: 50,
   demoUser: {
     id: "usr-demo-0001",
-    name: "Demo user",
+    name: "Account",
     role: "Warehouse supervisor",
     email: "demo.user@dcims.example",
     initials: "DU",

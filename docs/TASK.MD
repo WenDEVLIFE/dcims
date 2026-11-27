@@ -1226,68 +1226,83 @@ Priority: P1
 
 ### Purchase Order Page
 
-- [ ] Create purchase order overview page.
-- [ ] Create purchase order summary cards.
-- [ ] Create purchase order data table.
-- [ ] Display purchase order numbers.
-- [ ] Display supplier names.
-- [ ] Display order dates.
-- [ ] Display expected delivery dates.
-- [ ] Display order totals.
-- [ ] Display purchase order status.
+- [x] Create purchase order overview page.
+- [x] Create purchase order summary cards.
+- [x] Create purchase order data table.
+- [x] Display purchase order numbers.
+- [x] Display supplier names.
+- [x] Display order dates.
+- [x] Display expected delivery dates.
+- [x] Display order totals.
+- [x] Display purchase order status.
 
 ### Order Creation
 
-- [ ] Create multi-item purchase order form.
-- [ ] Select supplier.
-- [ ] Select destination warehouse.
-- [ ] Add material line items.
-- [ ] Enter ordered quantities.
-- [ ] Enter unit prices.
-- [ ] Calculate line item totals.
-- [ ] Calculate subtotal.
-- [ ] Apply valid discount.
-- [ ] Apply delivery fee.
-- [ ] Calculate final order total.
-- [ ] Save purchase order as draft.
-- [ ] Submit purchase order for approval.
+- [x] Create multi-item purchase order form.
+- [x] Select supplier.
+- [x] Select destination warehouse.
+- [x] Add material line items.
+- [x] Enter ordered quantities.
+- [x] Enter unit prices.
+- [x] Calculate line item totals.
+- [x] Calculate subtotal.
+- [x] Apply valid discount.
+- [x] Apply delivery fee.
+- [x] Calculate final order total.
+- [x] Save purchase order as draft.
+- [x] Submit purchase order for approval.
 
 ### Order Workflow
 
-- [ ] Implement purchase order approval.
-- [ ] Implement mark as ordered.
-- [ ] Implement order cancellation.
-- [ ] Implement draft order editing.
-- [ ] Enforce valid status transitions.
-- [ ] Prevent editing completed purchase orders.
+- [x] Implement purchase order approval.
+- [x] Implement mark as ordered.
+- [x] Implement order cancellation.
+- [x] Implement draft order editing.
+- [x] Enforce valid status transitions.
+- [x] Prevent editing completed purchase orders.
 
 ### Receiving Workflow
 
-- [ ] Create receiving form.
-- [ ] Display ordered quantities.
-- [ ] Display previously received quantities.
-- [ ] Display remaining quantities.
-- [ ] Enter received quantities.
-- [ ] Validate remaining quantities.
-- [ ] Increase destination warehouse stock.
-- [ ] Recalculate average inventory cost.
-- [ ] Generate stock-in transactions.
-- [ ] Update received quantities.
-- [ ] Support partial deliveries.
-- [ ] Update purchase order status.
-- [ ] Prevent duplicate receiving operations.
-- [ ] Generate activity records.
-- [ ] Generate notifications.
+- [x] Create receiving form.
+- [x] Display ordered quantities.
+- [x] Display previously received quantities.
+- [x] Display remaining quantities.
+- [x] Enter received quantities.
+- [x] Validate remaining quantities.
+- [x] Increase destination warehouse stock.
+- [x] Recalculate average inventory cost.
+- [x] Generate stock-in transactions.
+- [x] Update received quantities.
+- [x] Support partial deliveries.
+- [x] Update purchase order status.
+- [x] Prevent duplicate receiving operations.
+- [x] Generate activity records.
+- [x] Generate notifications.
 
 ### Additional Features
 
-- [ ] Implement purchase order details page.
-- [ ] Implement purchase order search.
-- [ ] Implement supplier filter.
-- [ ] Implement status filter.
-- [ ] Implement date range filter.
-- [ ] Implement printable purchase order.
-- [ ] Implement CSV export.
+
+- [x] Implement purchase order details page.
+- [x] Implement purchase order search.
+- [x] Implement supplier filter.
+- [x] Implement status filter.
+- [x] Implement date range filter.
+
+Implementation notes:
+
+- Purchase orders are created as drafts and become stock only when received.
+  Approval and dispatch change status; neither touches inventory.
+- Draft orders are the only editable state, and editing reuses the same line
+  validation and total calculation as creation.
+- Cancellation is blocked once stock has been received, including partially
+  received orders, because the delivered quantity is already in inventory.
+- Receiving reuses the inventory service per line, so weighted-average costing
+  and stock-in movements stay identical to every other receiving path.
+- The form shows live subtotal, discount, delivery fee, and total using the same
+  centavos arithmetic the service stores, so the preview cannot disagree with
+  the saved order.
+- [x] Implement printable purchase order.
+- [x] Implement CSV export.
 
 ### Acceptance Criteria
 
@@ -2055,7 +2070,7 @@ Update this section after each completed phase.
 | 14 | Material Requests | P1 | Completed |
 | 15 | Equipment Management | P1 | Completed |
 | 16 | Supplier Management | P1 | Completed |
-| 17 | Purchase Orders | P1 | Pending |
+| 17 | Purchase Orders | P1 | Completed |
 | 18 | Reports and Analytics | P1 | Pending |
 | 19 | Activity Logs | P1 | Pending |
 | 20 | Notifications | P2 | Pending |

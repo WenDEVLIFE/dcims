@@ -107,7 +107,13 @@ interface DomainStore extends DomainData {
 
   // Procurement
   createPurchaseOrder: (input: procurementService.CreatePurchaseOrderInput) => DomainResult<void>;
+  updatePurchaseOrder: (
+    id: string,
+    input: procurementService.CreatePurchaseOrderInput,
+  ) => DomainResult<void>;
   approvePurchaseOrder: (id: string) => DomainResult<void>;
+  markPurchaseOrderOrdered: (id: string) => DomainResult<void>;
+  cancelPurchaseOrder: (id: string) => DomainResult<void>;
   receivePurchaseOrder: (input: procurementService.ReceivePurchaseOrderInput) => DomainResult<void>;
 
   // Equipment
@@ -234,8 +240,14 @@ export const useDomainStore = create<DomainStore>()(
 
         createPurchaseOrder: (input) =>
           commit(procurementService.createPurchaseOrder(get(), input, context())),
+        updatePurchaseOrder: (id, input) =>
+          commit(procurementService.updatePurchaseOrder(get(), id, input, context())),
         approvePurchaseOrder: (id) =>
           commit(procurementService.approvePurchaseOrder(get(), id, context())),
+        markPurchaseOrderOrdered: (id) =>
+          commit(procurementService.markPurchaseOrderOrdered(get(), id, context())),
+        cancelPurchaseOrder: (id) =>
+          commit(procurementService.cancelPurchaseOrder(get(), id, context())),
         receivePurchaseOrder: (input) =>
           commit(procurementService.receivePurchaseOrder(get(), input, context())),
 

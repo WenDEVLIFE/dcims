@@ -219,3 +219,147 @@ export function receivePurchaseOrder(
     }),
   });
 }
+
+export function markPurchaseOrderOrdered(
+  data: DomainData,
+  orderId: string,
+  ctx: OperationContext,
+): DomainResult<DomainData> {
+  const order = data.purchaseOrders.find((entry) => entry.id === orderId);
+  if (!order) return fail("Purchase order not found");
+  if (order.status !== "approved") {
+    return fail(`Only approved orders can be marked as ordered (current: ${order.status})`);
+  }
+
+  const updated: PurchaseOrder = {
+    ...order,
+    status: "ordered",
+    orderedAt: ctx.now,
+    updatedAt: ctx.now,
+  };
+
+  return succeed({
+    ...data,
+    purchaseOrders: data.purchaseOrders.map((entry) =>
+      entry.id === orderId ? updated : entry,
+    ),
+    activityLogs: appendActivity(data, {
+      action: "Purchase order dispatched",
+      entityType: "purchase-order",
+      entityId: order.id,
+      description: `${order.reference} marked as ordered with the supplier.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
+  });
+}
+
+export function cancelPurchaseOrder(
+  data: DomainData,
+  orderId: string,
+  ctx: OperationContext,
+): DomainResult<DomainData> {
+  const order = data.purchaseOrders.find((entry) => entry.id === orderId);
+  if (!order) return fail("Purchase order not found");
+
+  if (order.status === "cancelled") return fail("Order is already cancelled");
+  if (order.status === "received") return fail("A fully received order cannot be cancelled");
+  if (order.status === "partially-received") {
+    return fail("Partially received orders cannot be cancelled; the delivered stock is already in inventory");
+  }
+
+  const updated: PurchaseOrder = {
+    ...order,
+    status: "cancelled",
+    updatedAt: ctx.now,
+  };
+
+  return succeed({
+    ...data,
+    purchaseOrders: data.purchaseOrders.map((entry) =>
+      entry.id === orderId ? updated : entry,
+    ),
+    activityLogs: appendActivity(data, {
+      action: "Purchase order cancelled",
+      entityType: "purchase-order",
+      entityId: order.id,
+      description: `${order.reference} cancelled.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
+  });
+}
+
+/** Drafts are the only editable order state. */
+export function updatePurchaseOrder(
+  data: DomainData,
+  orderId: string,
+  input: CreatePurchaseOrderInput,
+  ctx: OperationContext,
+): DomainResult<DomainData> {
+  const order = data.purchaseOrders.find((entry) => entry.id === orderId);
+  if (!order) return fail("Purchase order not found");
+  if (order.status !== "draft") {
+    return fail(`Only draft orders can be edited (current: ${order.status})`);
+  }
+
+  const supplier = data.suppliers.find((item) => item.id === input.supplierId);
+  if (!supplier) return fail("Supplier not found");
+  if (supplier.status === "inactive") {
+    return fail("Inactive suppliers cannot receive new orders");
+  }
+  if (!data.warehouses.some((item) => item.id === input.warehouseId)) {
+    return fail("Destination warehouse not found");
+  }
+  if (input.items.length === 0) return fail("Add at least one material");
+
+  const items: PurchaseOrderItem[] = [];
+  for (const [index, line] of input.items.entries()) {
+    const material = data.materials.find((item) => item.id === line.materialId);
+    if (!material) return fail("One of the selected materials no longer exists");
+    if (!Number.isFinite(line.orderedQuantity) || line.orderedQuantity <= 0) {
+      return fail(`Ordered quantity for ${material.name} must be greater than zero`);
+    }
+    if (!Number.isFinite(line.unitCostCentavos) || line.unitCostCentavos < 0) {
+      return fail(`Unit cost for ${material.name} must be zero or greater`);
+    }
+    items.push({
+      id: order.items[index]?.id ?? `poi-${generateId().slice(0, 8)}-${index + 1}`,
+      materialId: material.id,
+      orderedQuantity: line.orderedQuantity,
+      receivedQuantity: 0,
+      unitCostCentavos: line.unitCostCentavos,
+    });
+  }
+
+  const totals = calculatePurchaseOrderTotals(items, {
+    discountCentavos: input.discountCentavos,
+    deliveryFeeCentavos: input.deliveryFeeCentavos,
+  });
+
+  const updated: PurchaseOrder = {
+    ...order,
+    supplierId: supplier.id,
+    warehouseId: input.warehouseId,
+    items,
+    ...totals,
+    expectedDeliveryDate: input.expectedDeliveryDate,
+    notes: input.notes,
+    updatedAt: ctx.now,
+  };
+
+  return succeed({
+    ...data,
+    purchaseOrders: data.purchaseOrders.map((entry) =>
+      entry.id === orderId ? updated : entry,
+    ),
+    activityLogs: appendActivity(data, {
+      action: "Purchase order updated",
+      entityType: "purchase-order",
+      entityId: order.id,
+      description: `${order.reference} draft updated.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
+  });
+}

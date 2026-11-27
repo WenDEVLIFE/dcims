@@ -300,3 +300,102 @@ export function recentActivity(state: DomainData, limit = 6) {
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
     .slice(0, limit);
 }
+
+/* ------------------------------------------------------------------ */
+/* Projects                                                            */
+/* ------------------------------------------------------------------ */
+
+export function projectById(state: DomainData, projectId: string) {
+  return state.projects.find((project) => project.id === projectId);
+}
+
+export function projectConsumptions(state: DomainData, projectId: string) {
+  return state.materialConsumptions
+    .filter((entry) => entry.projectId === projectId)
+    .sort((left, right) => right.consumedAt.localeCompare(left.consumedAt));
+}
+
+/** Material spend, derived only from consumption records. */
+export function projectExpense(state: DomainData, projectId: string): Centavos {
+  return projectConsumptions(state, projectId).reduce(
+    (total, entry) => total + entry.totalCostCentavos,
+    0,
+  );
+}
+
+export function projectAllocations(state: DomainData, projectId: string) {
+  return state.projectMaterials
+    .filter((allocation) => allocation.projectId === projectId)
+    .map((allocation) => ({
+      allocation,
+      material: state.materials.find(
+        (material) => material.id === allocation.materialId,
+      ),
+    }))
+    .filter(
+      (
+        entry,
+      ): entry is {
+        allocation: (typeof state.projectMaterials)[number];
+        material: (typeof state.materials)[number];
+      } => entry.material !== undefined,
+    );
+}
+
+export function projectBudgetSummary(state: DomainData, projectId: string) {
+  const project = projectById(state, projectId);
+  if (!project) return null;
+
+  const expense = projectExpense(state, projectId);
+  return {
+    budgetCentavos: project.budgetCentavos,
+    expenseCentavos: expense,
+    remainingCentavos: Math.max(0, project.budgetCentavos - expense),
+    consumedPercent:
+      project.budgetCentavos === 0
+        ? 0
+        : Math.min(100, Math.round((expense / project.budgetCentavos) * 100)),
+  };
+}
+
+export function projectRequests(state: DomainData, projectId: string) {
+  return state.materialRequests.filter(
+    (request) => request.projectId === projectId,
+  );
+}
+
+export function projectEquipment(state: DomainData, projectId: string) {
+  return state.equipment.filter(
+    (asset) => asset.assignedProjectId === projectId,
+  );
+}
+
+export function projectActivity(state: DomainData, projectId: string) {
+  return state.activityLogs
+    .filter(
+      (log) =>
+        (log.entityType === "project" && log.entityId === projectId) ||
+        (log.entityType === "material-request" &&
+          state.materialRequests.some(
+            (request) =>
+              request.id === log.entityId && request.projectId === projectId,
+          )),
+    )
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
+    .slice(0, 20);
+}
+
+/** Cards on the projects overview. */
+export function projectOverview(state: DomainData) {
+  return state.projects.map((project) => ({
+    project,
+    allocationCount: state.projectMaterials.filter(
+      (allocation) => allocation.projectId === project.id,
+    ).length,
+    expenseCentavos: projectExpense(state, project.id),
+    budget: projectBudgetSummary(state, project.id),
+    openRequests: projectRequests(state, project.id).filter((request) =>
+      ["pending", "approved", "partially-fulfilled"].includes(request.status),
+    ).length,
+  }));
+}

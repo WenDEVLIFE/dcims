@@ -159,6 +159,8 @@ export interface ConstructionProject {
   location: string;
   client: string;
   status: ProjectStatus;
+  /** Completion percentage, 0–100. */
+  progress: number;
   startDate: ISODate;
   targetEndDate: ISODate;
   budgetCentavos: Centavos;

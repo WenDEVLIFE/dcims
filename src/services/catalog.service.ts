@@ -403,6 +403,7 @@ export function createProject(
     location: input.location.trim(),
     client: input.client.trim(),
     status: "planned",
+    progress: 0,
     startDate: input.startDate,
     targetEndDate: input.targetEndDate,
     budgetCentavos: input.budgetCentavos,
@@ -429,7 +430,10 @@ export function createProject(
 export function updateProject(
   data: DomainData,
   projectId: string,
-  input: Partial<ProjectInput> & { status?: ConstructionProject["status"] },
+  input: Partial<ProjectInput> & {
+    status?: ConstructionProject["status"];
+    progress?: number;
+  },
   ctx: OperationContext,
 ): DomainResult<DomainData> {
   const project = data.projects.find((item) => item.id === projectId);
@@ -439,6 +443,18 @@ export function updateProject(
   const nextEnd = input.targetEndDate ?? project.targetEndDate;
   if (nextEnd < nextStart) {
     return fail("Target end date cannot precede the start date");
+  }
+
+  if (input.progress !== undefined) {
+    if (!Number.isFinite(input.progress) || input.progress < 0 || input.progress > 100) {
+      return fail("Progress must be between 0 and 100 percent");
+    }
+  }
+
+  if (input.budgetCentavos !== undefined) {
+    if (!Number.isFinite(input.budgetCentavos) || input.budgetCentavos < 0) {
+      return fail("Budget must be zero or greater");
+    }
   }
 
   return succeed({

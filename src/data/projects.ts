@@ -9,6 +9,7 @@ interface ProjectSeed {
   location: string;
   client: string;
   status: ConstructionProject["status"];
+  progress: number;
   startDay: number;
   endDay: number;
   budgetPesos: number;
@@ -22,6 +23,7 @@ const SEEDS: ProjectSeed[] = [
     location: "Lanang",
     client: "Riverside Land Holdings",
     status: "active",
+    progress: 62,
     startDay: 10,
     endDay: 320,
     budgetPesos: 48_000_000,
@@ -33,6 +35,7 @@ const SEEDS: ProjectSeed[] = [
     location: "Mintal",
     client: "Davao Health Foundation",
     status: "active",
+    progress: 41,
     startDay: 24,
     endDay: 250,
     budgetPesos: 18_500_000,
@@ -44,6 +47,7 @@ const SEEDS: ProjectSeed[] = [
     location: "Downtown Davao",
     client: "Mercado Business Center",
     status: "active",
+    progress: 78,
     startDay: 40,
     endDay: 190,
     budgetPesos: 9_200_000,
@@ -55,6 +59,7 @@ const SEEDS: ProjectSeed[] = [
     location: "Buhangin",
     client: "DCIMS Internal",
     status: "completed",
+    progress: 100,
     startDay: -120,
     endDay: 60,
     budgetPesos: 6_800_000,
@@ -66,6 +71,7 @@ const SEEDS: ProjectSeed[] = [
     location: "Toril",
     client: "City Roads Office",
     status: "on-hold",
+    progress: 23,
     startDay: 150,
     endDay: 420,
     budgetPesos: 32_000_000,
@@ -77,6 +83,7 @@ const SEEDS: ProjectSeed[] = [
     location: "Matina",
     client: "Northgate Retail Ventures",
     status: "planned",
+    progress: 0,
     startDay: 210,
     endDay: 480,
     budgetPesos: 25_400_000,
@@ -92,6 +99,7 @@ export const projects: ConstructionProject[] = SEEDS.map((seed, index) => ({
   location: seed.location,
   client: seed.client,
   status: seed.status,
+  progress: seed.progress,
   startDate: dateAt(seed.startDay),
   targetEndDate: dateAt(seed.endDay),
   budgetCentavos: seed.budgetPesos * 100,

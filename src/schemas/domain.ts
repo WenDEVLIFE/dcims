@@ -143,6 +143,7 @@ export const projectSchema = z
     location: z.string().min(1).max(120),
     client: z.string().min(1).max(120),
     status: z.enum(PROJECT_STATUSES),
+    progress: z.number().min(0).max(100),
     startDate: isoDateSchema,
     targetEndDate: isoDateSchema,
     budgetCentavos: centavosSchema,
@@ -348,6 +349,24 @@ export const materialInputSchema = z.object({
 });
 
 export type MaterialInputValues = z.infer<typeof materialInputSchema>;
+
+export const projectInputSchema = z
+  .object({
+    name: z.string().min(1, "Project name is required").max(120),
+    location: z.string().min(1, "Location is required").max(120),
+    client: z.string().min(1, "Client is required").max(120),
+    managerName: z.string().min(1, "Project manager is required").max(120),
+    startDate: isoDateSchema,
+    targetEndDate: isoDateSchema,
+    budgetCentavos: z.number().int().nonnegative(),
+    description: z.string().max(500).optional(),
+  })
+  .refine((values) => values.targetEndDate >= values.startDate, {
+    message: "Target end date cannot precede the start date",
+    path: ["targetEndDate"],
+  });
+
+export type ProjectInputValues = z.infer<typeof projectInputSchema>;
 
 export const materialFormSchema = materialSchema.omit({
   id: true,

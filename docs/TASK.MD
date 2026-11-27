@@ -966,47 +966,62 @@ Priority: P1
 
 ### Projects Page
 
-- [ ] Create project overview page.
-- [ ] Create project summary cards.
-- [ ] Implement project card view.
-- [ ] Implement project table view.
-- [ ] Display project status.
-- [ ] Display project progress.
-- [ ] Display material budget.
-- [ ] Display material expenses.
-- [ ] Display project location.
-- [ ] Display project manager.
+- [x] Create project overview page.
+- [x] Create project summary cards.
+- [x] Implement project card view.
+- [x] Implement project table view.
+- [x] Display project status.
+- [x] Display project progress.
+- [x] Display material budget.
+- [x] Display material expenses.
+- [x] Display project location.
+- [x] Display project manager.
 
 ### Project Operations
 
-- [ ] Implement create project form.
-- [ ] Implement edit project form.
-- [ ] Implement project details page.
-- [ ] Implement project status updates.
-- [ ] Implement progress updates.
-- [ ] Implement project search.
-- [ ] Implement status filters.
+- [x] Implement create project form.
+- [x] Implement edit project form.
+- [x] Implement project details page.
+- [x] Implement project status updates.
+- [x] Implement progress updates.
+- [x] Implement project search.
+- [x] Implement status filters.
 
 ### Project Details
 
-- [ ] Overview tab.
-- [ ] Allocated materials tab.
-- [ ] Material consumption tab.
-- [ ] Material requests tab.
-- [ ] Equipment assignments tab.
-- [ ] Activity history tab.
+- [x] Overview tab.
+- [x] Allocated materials tab.
+- [x] Material consumption tab.
+- [x] Material requests tab.
+- [x] Equipment assignments tab.
+- [x] Activity history tab.
 
 ### Material Consumption
 
-- [ ] Create material consumption form.
-- [ ] Select allocated project material.
-- [ ] Enter consumed quantity.
-- [ ] Validate available project stock.
-- [ ] Deduct consumed project materials.
-- [ ] Record consumption cost.
-- [ ] Update project material expenses.
-- [ ] Calculate remaining material budget.
-- [ ] Generate activity log.
+- [x] Create material consumption form.
+- [x] Select allocated project material.
+- [x] Enter consumed quantity.
+- [x] Validate available project stock.
+- [x] Deduct consumed project materials.
+- [x] Record consumption cost.
+- [x] Update project material expenses.
+- [x] Calculate remaining material budget.
+- [x] Generate activity log.
+
+Implementation notes:
+
+- `ConstructionProject` gained a `progress` field (0–100). The persisted store
+  is now version 3; migration backfills progress for saved projects from their
+  schedule instead of defaulting everything to zero.
+- Material expenses come only from consumption records, so the figure cannot
+  drift from what was actually used. Remaining budget is budget minus expense,
+  floored at zero.
+- Consumption is deducted from on-site allocation, never from a warehouse
+  balance — that stock left the warehouse at fulfilment.
+- Status and progress changes go through `updateProject`, which rejects
+  progress outside 0–100 and a target end date before the start date.
+- The `[id]` route declares `generateStaticParams` from seed projects; projects
+  created at runtime still render on demand.
 
 ### Acceptance Criteria
 
@@ -1993,7 +2008,7 @@ Update this section after each completed phase.
 | 10 | Categories Management | P1 | Completed |
 | 11 | Warehouse Management | P0 | Completed |
 | 12 | Stock Movements | P0 | Completed |
-| 13 | Construction Projects | P1 | Pending |
+| 13 | Construction Projects | P1 | Completed |
 | 14 | Material Requests | P1 | Pending |
 | 15 | Equipment Management | P1 | Pending |
 | 16 | Supplier Management | P1 | Pending |

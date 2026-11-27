@@ -24,7 +24,7 @@ import * as equipmentService from "@/services/equipment.service";
 import type { OperationContext } from "@/services/support";
 
 const STORE_NAME = "dcims-domain-v1";
-const STORE_VERSION = 2;
+const STORE_VERSION = 3;
 
 function toDomainData(source: DemoData): DomainData {
   const { version: _version, exportedAt: _exportedAt, ...rest } = source;
@@ -35,6 +35,23 @@ function toDomainData(source: DemoData): DomainData {
 
 function seedState(): DomainData {
   return toDomainData(initialDemoData);
+}
+
+/** Schedule-based progress used only when migrating older saved projects. */
+function progressFromSchedule(project: {
+  startDate: string;
+  targetEndDate: string;
+  status: string;
+}): number {
+  if (project.status === "completed") return 100;
+  if (project.status === "planned") return 0;
+
+  const start = Date.parse(project.startDate);
+  const end = Date.parse(project.targetEndDate);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return 0;
+
+  const ratio = (Date.now() - start) / (end - start);
+  return Math.min(100, Math.max(0, Math.round(ratio * 100)));
 }
 
 interface DomainStore extends DomainData {
@@ -63,7 +80,10 @@ interface DomainStore extends DomainData {
   createProject: (input: catalog.ProjectInput) => DomainResult<void>;
   updateProject: (
     id: string,
-    input: Partial<catalog.ProjectInput> & { status?: ConstructionProject["status"] },
+    input: Partial<catalog.ProjectInput> & {
+      status?: ConstructionProject["status"];
+      progress?: number;
+    },
   ) => DomainResult<void>;
   createSupplier: (input: catalog.SupplierInput) => DomainResult<void>;
   updateSupplier: (id: string, input: Partial<catalog.SupplierInput>) => DomainResult<void>;
@@ -275,7 +295,25 @@ export const useDomainStore = create<DomainStore>()(
       migrate: (persisted, version) => {
         // Version 1 lacks balance costs; backfill after validating the old data.
         if (version < 1) return seedState() as DomainStore;
-        return persisted as DomainStore;
+
+        const previous = persisted as DomainStore;
+
+        // Version 3 adds project progress. Saved demos get a schedule-derived
+        // starting value instead of a hardcoded zero.
+        if (version < 3) {
+          return {
+            ...previous,
+            projects: (previous.projects ?? []).map((project) => ({
+              ...project,
+              progress:
+                typeof project.progress === "number"
+                  ? project.progress
+                  : progressFromSchedule(project),
+            })),
+          } as DomainStore;
+        }
+
+        return previous;
       },
       onRehydrateStorage: () => (state) => {
         if (!state) return;

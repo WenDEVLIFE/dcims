@@ -129,7 +129,7 @@ export function SettingsContent() {
       />
 
       <Tabs defaultValue="company" className="mt-6">
-        <TabsList className="flex-wrap">
+        <TabsList className="max-w-full overflow-x-auto">
           <TabsTrigger value="company">Company</TabsTrigger>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="appearance">Appearance</TabsTrigger>

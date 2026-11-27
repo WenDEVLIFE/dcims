@@ -65,7 +65,7 @@ export function DataTable<TData>({
 
   return (
     <div className="overflow-x-auto rounded-card border border-border">
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full min-w-[36rem] border-collapse text-sm">
         {caption && <caption className="sr-only">{caption}</caption>}
         <thead>
           <tr className="border-b border-border bg-secondary/60">

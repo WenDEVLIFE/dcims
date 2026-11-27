@@ -67,7 +67,7 @@ export function CategoryFormDialog({ category, onClose, onSave }: CategoryFormDi
           <FormField label="Description" htmlFor={`${id}-description`} error={errors.description?.message}>
             <Textarea id={`${id}-description`} rows={3} maxLength={300} aria-invalid={Boolean(errors.description)} {...register("description")} />
           </FormField>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <FormField label="Icon" htmlFor={`${id}-icon`} error={errors.icon?.message}>
               <select id={`${id}-icon`} aria-invalid={Boolean(errors.icon)} className={selectClass} {...register("icon")}>
                 {CATEGORY_ICONS.map((option) => <option key={option} value={option}>{option}</option>)}

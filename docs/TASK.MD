@@ -1631,6 +1631,24 @@ Priority: P0
 - [ ] Verify touch-friendly interactions.
 - [ ] Verify readable typography.
 
+Status: static audit complete; viewport verification outstanding.
+
+The layout was reviewed against every hazard this phase names, and five defects
+were fixed:
+
+- Project detail and settings tab strips now scroll horizontally instead of
+  clipping six or seven triggers on a 360–430px screen.
+- The category form's two-column field row stacks below 640px.
+- Dialog content is capped at the viewport height with internal scrolling, so a
+  long purchase-order form cannot push its actions off-screen on a short phone.
+- Data tables enforce a 36rem minimum width, so columns stay readable and the
+  container scrolls instead of crushing cells.
+- KPI values wrap rather than overflow their card at narrow widths.
+
+Not verified, and not claimed: actual rendering at 1920, 1440, 1280, 1024, 768,
+430, 390, and 360px; sidebar expand/collapse by hand; chart resize behaviour;
+touch target sizes. These need a browser session.
+
 ### Acceptance Criteria
 
 - No unintended horizontal page overflow.
@@ -2145,7 +2163,7 @@ Update this section after each completed phase.
 | 20 | Notifications | P2 | Completed |
 | 21 | Global Search | P2 | Completed |
 | 22 | Application Settings | P1 | Completed |
-| 23 | Responsive Design | P0 | Pending |
+| 23 | Responsive Design | P0 | In Progress |
 | 24 | Accessibility | P1 | Pending |
 | 25 | Business Logic Testing | P0 | Pending |
 | 26 | UI and UX Refinement | P1 | Pending |

@@ -33,7 +33,7 @@ export function StatCard({
           <Icon aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
         )}
       </div>
-      <p className="font-heading text-2xl leading-8 font-bold tabular-nums text-foreground md:text-[1.75rem] md:leading-9">
+      <p className="font-heading text-2xl leading-8 font-bold tabular-nums break-words text-foreground md:text-[1.75rem] md:leading-9">
         {value}
       </p>
       {hint && (

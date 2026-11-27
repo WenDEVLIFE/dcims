@@ -136,7 +136,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
     <PageContainer>
       <PageHeader
         title={project.name}
-        description={`${project.code} · ${project.location} · ${project.client}`}
+        description={`${project.code} 路 ${project.location} 路 ${project.client}`}
         actions={
           <>
             <Button asChild size="sm" variant="ghost">
@@ -161,7 +161,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <StatusBadge status={labelFor(project.status)} />
         <span className="text-[0.8125rem] text-muted-foreground">
-          {formatDate(project.startDate)} → {formatDate(project.targetEndDate)}
+          {formatDate(project.startDate)} 鈫?{formatDate(project.targetEndDate)}
         </span>
         <span className="text-[0.8125rem] text-muted-foreground">
           Manager: {project.managerName}
@@ -180,7 +180,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
           <div>
             <p className="text-sm font-semibold">Progress</p>
             <p className="text-[0.8125rem] text-muted-foreground">
-              {project.progress}% complete · {budget?.consumedPercent ?? 0}% of budget consumed
+              {project.progress}% complete 路 {budget?.consumedPercent ?? 0}% of budget consumed
             </p>
           </div>
           <Progress value={project.progress} className="h-2" />
@@ -226,7 +226,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
       </div>
 
       <Tabs defaultValue="overview" className="mt-6">
-        <TabsList>
+        <TabsList className="max-w-full overflow-x-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="materials">Materials</TabsTrigger>
           <TabsTrigger value="consumption">Consumption</TabsTrigger>
@@ -354,7 +354,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
                   <div className="min-w-0">
                     <p className="font-mono text-xs text-muted-foreground">{request.reference}</p>
                     <p className="truncate text-sm">
-                      {request.items.length} line{request.items.length === 1 ? "" : "s"} · {request.priority} priority
+                      {request.items.length} line{request.items.length === 1 ? "" : "s"} 路 {request.priority} priority
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
@@ -402,7 +402,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
                 <li key={log.id} className="rounded-md border border-border px-3 py-2">
                   <p className="text-sm">{log.action}</p>
                   <p className="text-xs text-muted-foreground">
-                    {log.description} · {formatDateTime(log.createdAt)}
+                    {log.description} 路 {formatDateTime(log.createdAt)}
                   </p>
                 </li>
               ))}

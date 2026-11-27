@@ -34,6 +34,7 @@ import { formatCentavos } from "@/lib/currency";
 import { formatDate, formatNumber } from "@/lib/format";
 import { filterByDateRange } from "@/stores/selectors";
 import { useDomainStore } from "@/stores/domain-store";
+import { PURCHASE_ORDER_STATUS_LABELS } from "@/lib/status-labels";
 
 const subscribeToMount = () => () => {};
 
@@ -181,7 +182,7 @@ export function PurchaseOrdersContent() {
       id: "status",
       header: "Status",
       sortValue: (row) => row.status,
-      cell: (row) => <StatusBadge status={labelForStatus(row.status)} />,
+      cell: (row) => <StatusBadge status={PURCHASE_ORDER_STATUS_LABELS[row.status]} />,
     },
     {
       id: "actions",
@@ -278,7 +279,7 @@ export function PurchaseOrdersContent() {
             label="Status"
             selected={statusFilter}
             onChange={setStatusFilter}
-            options={STATUS_VALUES.map((status) => ({ value: status, label: labelForStatus(status) }))}
+            options={STATUS_VALUES.map((status) => ({ value: status, label: PURCHASE_ORDER_STATUS_LABELS[status] }))}
           />
           <FilterDropdown
             label="Supplier"
@@ -355,26 +356,6 @@ const STATUS_VALUES: PurchaseOrder["status"][] = [
   "cancelled",
 ];
 
-function labelForStatus(status: PurchaseOrder["status"]): string {
-  switch (status) {
-    case "partially-received":
-      return "Partially received";
-    case "draft":
-      return "Draft";
-    case "pending":
-      return "Pending";
-    case "approved":
-      return "Approved";
-    case "ordered":
-      return "Ordered";
-    case "received":
-      return "Received";
-    case "cancelled":
-      return "Cancelled";
-    default:
-      return status;
-  }
-}
 
 function OrderDetailsDialog({
   order,
@@ -396,7 +377,7 @@ function OrderDetailsDialog({
           <DialogTitle className="font-mono text-base">{order.reference}</DialogTitle>
           <DialogDescription>
             {supplier?.name ?? "Supplier"} 鈫?{warehouse?.name ?? "Warehouse"} 路{" "}
-            {labelForStatus(order.status)}
+            {PURCHASE_ORDER_STATUS_LABELS[order.status]}
           </DialogDescription>
         </DialogHeader>
 

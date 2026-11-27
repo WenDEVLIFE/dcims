@@ -30,6 +30,7 @@ import { RequestFormDialog } from "@/features/material-requests/request-form-dia
 import type { MaterialRequest, RequestPriority } from "@/types/domain";
 import { formatDate, formatNumber } from "@/lib/format";
 import { useDomainStore } from "@/stores/domain-store";
+import { REQUEST_STATUS_LABELS } from "@/lib/status-labels";
 
 const subscribeToMount = () => () => {};
 
@@ -193,7 +194,7 @@ export function RequestsContent() {
       id: "status",
       header: "Status",
       sortValue: (row) => row.status,
-      cell: (row) => <StatusBadge status={statusLabel(row.status)} />,
+      cell: (row) => <StatusBadge status={REQUEST_STATUS_LABELS[row.status]} />,
     },
     {
       id: "actions",
@@ -378,21 +379,3 @@ export function RequestsContent() {
   );
 }
 
-function statusLabel(status: MaterialRequest["status"]): string {
-  switch (status) {
-    case "partially-fulfilled":
-      return "Partially fulfilled";
-    case "pending":
-      return "Pending";
-    case "approved":
-      return "Approved";
-    case "fulfilled":
-      return "Fulfilled";
-    case "rejected":
-      return "Rejected";
-    case "cancelled":
-      return "Cancelled";
-    default:
-      return status;
-  }
-}

@@ -27,6 +27,7 @@ import { formatCentavos } from "@/lib/currency";
 import { formatNumber, unitLabel } from "@/lib/format";
 import { resolveStockStatus, summariseMaterialInventory } from "@/lib/inventory";
 import { useDomainStore } from "@/stores/domain-store";
+import { STOCK_STATUS_LABELS } from "@/lib/status-labels";
 
 const PAGE_SIZE = 10;
 
@@ -228,7 +229,7 @@ export function MaterialsContent() {
         row.material.status === "discontinued" ? (
           <StatusBadge status="Archived" tone="neutral" />
         ) : (
-          <StatusBadge status={labelForStatus(row.stockStatus)} />
+          <StatusBadge status={STOCK_STATUS_LABELS[row.stockStatus]} />
         ),
     },
     {
@@ -401,8 +402,3 @@ export function MaterialsContent() {
   );
 }
 
-function labelForStatus(status: StockStatus): string {
-  if (status === "in-stock") return "In stock";
-  if (status === "low-stock") return "Low stock";
-  return "Out of stock";
-}

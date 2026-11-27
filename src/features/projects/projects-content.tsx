@@ -18,19 +18,13 @@ import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ProjectFormDialog } from "@/features/projects/project-form-dialog";
 import type { ProjectInputValues } from "@/schemas/domain";
-import type { ConstructionProject, ProjectStatus } from "@/types/domain";
+import type { ConstructionProject } from "@/types/domain";
 import { formatCentavos } from "@/lib/currency";
 import { formatDate, formatNumber } from "@/lib/format";
 import { useDomainStore } from "@/stores/domain-store";
+import { PROJECT_STATUS_LABELS, PROJECT_STATUS_OPTIONS } from "@/lib/status-labels";
 import { projectOverview } from "@/stores/selectors";
 
-const STATUS_OPTIONS: Array<{ value: ProjectStatus; label: string }> = [
-  { value: "planned", label: "Planned" },
-  { value: "active", label: "Active" },
-  { value: "on-hold", label: "On hold" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
-];
 
 const subscribeToMount = () => () => {};
 
@@ -121,7 +115,7 @@ export function ProjectsContent() {
       id: "status",
       header: "Status",
       sortValue: (row) => row.project.status,
-      cell: (row) => <StatusBadge status={statusLabel(row.project.status)} />,
+      cell: (row) => <StatusBadge status={PROJECT_STATUS_LABELS[row.project.status]} />,
     },
   ];
 
@@ -179,7 +173,7 @@ export function ProjectsContent() {
             label="Status"
             selected={statusFilter}
             onChange={setStatusFilter}
-            options={STATUS_OPTIONS}
+            options={PROJECT_STATUS_OPTIONS}
           />
         </div>
         <div className="flex items-center gap-1 rounded-md border border-border p-0.5">
@@ -215,7 +209,7 @@ export function ProjectsContent() {
                   </Link>
                   <p className="font-mono text-[0.6875rem] text-muted-foreground">{project.code}</p>
                 </div>
-                <StatusBadge status={statusLabel(project.status)} />
+                <StatusBadge status={PROJECT_STATUS_LABELS[project.status]} />
               </div>
 
               <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -294,7 +288,3 @@ export function ProjectsContent() {
   );
 }
 
-function statusLabel(status: ProjectStatus): string {
-  const found = STATUS_OPTIONS.find((option) => option.value === status);
-  return found?.label ?? status;
-}

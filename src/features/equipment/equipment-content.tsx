@@ -29,20 +29,14 @@ import {
   type EquipmentFormValues,
 } from "@/features/equipment/equipment-form-dialog";
 import { MaintenanceDialog } from "@/features/equipment/maintenance-dialog";
-import type { Equipment, EquipmentStatus } from "@/types/domain";
+import type { Equipment } from "@/types/domain";
 import { formatCentavos } from "@/lib/currency";
 import { formatDate, formatDateTime, formatNumber } from "@/lib/format";
 import { useDomainStore } from "@/stores/domain-store";
+import { EQUIPMENT_CONDITION_LABELS, EQUIPMENT_STATUS_LABELS } from "@/lib/status-labels";
 
 const subscribeToMount = () => () => {};
 
-const STATUS_LABELS: Record<EquipmentStatus, string> = {
-  available: "Available",
-  assigned: "Assigned",
-  "under-maintenance": "Under maintenance",
-  damaged: "Damaged",
-  retired: "Retired",
-};
 
 export function EquipmentContent() {
   const state = useDomainStore();
@@ -158,7 +152,7 @@ export function EquipmentContent() {
     {
       id: "condition",
       header: "Condition",
-      cell: (row) => <StatusBadge status={conditionLabel(row.condition)} />,
+      cell: (row) => <StatusBadge status={EQUIPMENT_CONDITION_LABELS[row.condition]} />,
     },
     {
       id: "project",
@@ -182,7 +176,7 @@ export function EquipmentContent() {
       id: "status",
       header: "Status",
       sortValue: (row) => row.status,
-      cell: (row) => <StatusBadge status={STATUS_LABELS[row.status]} />,
+      cell: (row) => <StatusBadge status={EQUIPMENT_STATUS_LABELS[row.status]} />,
     },
     {
       id: "actions",
@@ -276,7 +270,7 @@ export function EquipmentContent() {
             label="Status"
             selected={statusFilter}
             onChange={setStatusFilter}
-            options={Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }))}
+            options={Object.entries(EQUIPMENT_STATUS_LABELS).map(([value, label]) => ({ value, label }))}
           />
           <FilterDropdown
             label="Category"
@@ -379,8 +373,8 @@ function EquipmentDetailsDialog({
           columns={2}
           items={[
             { label: "Category", value: equipment.category },
-            { label: "Condition", value: conditionLabel(equipment.condition) },
-            { label: "Status", value: STATUS_LABELS[equipment.status] },
+            { label: "Condition", value: EQUIPMENT_CONDITION_LABELS[equipment.condition] },
+            { label: "Status", value: EQUIPMENT_STATUS_LABELS[equipment.status] },
             { label: "Location", value: equipment.location },
             { label: "Purchase date", value: formatDate(equipment.purchaseDate) },
             { label: "Purchase cost", value: formatCentavos(equipment.purchaseCostCentavos) },
@@ -429,8 +423,3 @@ function EquipmentDetailsDialog({
   );
 }
 
-function conditionLabel(condition: Equipment["condition"]): string {
-  if (condition === "good") return "Good";
-  if (condition === "fair") return "Fair";
-  return "Needs repair";
-}

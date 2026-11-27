@@ -30,6 +30,7 @@ import type { ConstructionProject, ProjectStatus } from "@/types/domain";
 import { formatCentavos } from "@/lib/currency";
 import { formatDate, formatDateTime, formatQuantity } from "@/lib/format";
 import { useDomainStore } from "@/stores/domain-store";
+import { EQUIPMENT_STATUS_LABELS, PROJECT_STATUS_LABELS } from "@/lib/status-labels";
 import {
   projectActivity,
   projectAllocations,
@@ -159,7 +160,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
       />
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <StatusBadge status={labelFor(project.status)} />
+        <StatusBadge status={PROJECT_STATUS_LABELS[project.status]} />
         <span className="text-[0.8125rem] text-muted-foreground">
           {formatDate(project.startDate)} 閳?{formatDate(project.targetEndDate)}
         </span>
@@ -386,7 +387,7 @@ export function ProjectDetailContent({ projectId }: { projectId: string }) {
                     <p className="truncate text-sm font-medium">{asset.name}</p>
                     <p className="font-mono text-[0.6875rem] text-muted-foreground">{asset.assetCode}</p>
                   </div>
-                  <StatusBadge status={labelForEquipment(asset.status)} />
+                  <StatusBadge status={EQUIPMENT_STATUS_LABELS[asset.status]} />
                 </li>
               ))}
             </ul>
@@ -437,26 +438,6 @@ function SummaryTile({ label, value }: { label: string; value: string }) {
   );
 }
 
-function labelFor(status: ProjectStatus): string {
-  const found = STATUS_OPTIONS.find((option) => option.value === status);
-  return found?.label ?? status;
-}
 
-function labelForEquipment(status: string): string {
-  switch (status) {
-    case "available":
-      return "Available";
-    case "assigned":
-      return "Assigned";
-    case "under-maintenance":
-      return "Under maintenance";
-    case "damaged":
-      return "Damaged";
-    case "retired":
-      return "Retired";
-    default:
-      return status;
-  }
-}
 
 export type { ConstructionProject };

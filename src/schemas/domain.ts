@@ -190,6 +190,7 @@ export const equipmentSchema = z.object({
   condition: z.enum(EQUIPMENT_CONDITIONS),
   purchaseDate: isoDateSchema,
   purchaseCostCentavos: centavosSchema,
+  nextMaintenanceDate: isoDateSchema.optional(),
   assignedProjectId: idSchema.optional(),
   location: z.string().min(1).max(120),
   notes: z.string().max(500).optional(),

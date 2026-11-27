@@ -59,6 +59,7 @@ export const equipment: Equipment[] = SEEDS.map((seed, index) => {
     condition: seed.condition,
     purchaseDate: dateAt(seed.purchaseDay),
     purchaseCostCentavos: seed.purchaseCostPesos * 100,
+    nextMaintenanceDate: index % 4 === 0 ? dateAt(118 + index * 3) : undefined,
     assignedProjectId: assignedProject?.id,
     location: seed.location,
     notes: seed.notes,

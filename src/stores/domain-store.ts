@@ -112,8 +112,13 @@ interface DomainStore extends DomainData {
 
   // Equipment
   registerEquipment: (input: equipmentService.RegisterEquipmentInput) => DomainResult<void>;
+  updateEquipment: (
+    id: string,
+    input: equipmentService.UpdateEquipmentInput,
+  ) => DomainResult<void>;
   assignEquipment: (input: equipmentService.AssignEquipmentInput) => DomainResult<void>;
   returnEquipment: (id: string) => DomainResult<void>;
+  retireEquipment: (id: string) => DomainResult<void>;
   recordEquipmentMaintenance: (input: equipmentService.MaintenanceInput) => DomainResult<void>;
 
   // Settings and data lifecycle
@@ -236,10 +241,14 @@ export const useDomainStore = create<DomainStore>()(
 
         registerEquipment: (input) =>
           commit(equipmentService.registerEquipment(get(), input, context())),
+        updateEquipment: (id, input) =>
+          commit(equipmentService.updateEquipment(get(), id, input, context())),
         assignEquipment: (input) =>
           commit(equipmentService.assignEquipment(get(), input, context())),
         returnEquipment: (id) =>
           commit(equipmentService.returnEquipment(get(), id, context())),
+        retireEquipment: (id) =>
+          commit(equipmentService.retireEquipment(get(), id, context())),
         recordEquipmentMaintenance: (input) =>
           commit(equipmentService.recordEquipmentMaintenance(get(), input, context())),
 

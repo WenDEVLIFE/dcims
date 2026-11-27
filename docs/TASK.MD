@@ -1114,43 +1114,61 @@ Priority: P1
 
 ### Equipment Page
 
-- [ ] Create equipment overview page.
-- [ ] Create equipment summary cards.
-- [ ] Create equipment data table.
-- [ ] Display equipment asset codes.
-- [ ] Display equipment names.
-- [ ] Display equipment categories.
-- [ ] Display equipment condition.
-- [ ] Display assigned project.
-- [ ] Display equipment status.
-- [ ] Display next maintenance date.
+- [x] Create equipment overview page.
+- [x] Create equipment summary cards.
+- [x] Create equipment data table.
+- [x] Display equipment asset codes.
+- [x] Display equipment names.
+- [x] Display equipment categories.
+- [x] Display equipment condition.
+- [x] Display assigned project.
+- [x] Display equipment status.
+- [x] Display next maintenance date.
 
 ### Equipment Operations
 
-- [ ] Implement equipment registration.
-- [ ] Implement equipment editing.
-- [ ] Implement equipment details.
-- [ ] Implement equipment assignment.
-- [ ] Implement equipment return.
-- [ ] Implement equipment condition updates.
-- [ ] Implement maintenance recording.
-- [ ] Implement equipment retirement.
-- [ ] Implement assignment history.
-- [ ] Implement maintenance history.
-- [ ] Implement equipment search.
-- [ ] Implement category filters.
-- [ ] Implement status filters.
+- [x] Implement equipment registration.
+- [x] Implement equipment editing.
+- [x] Implement equipment details.
+- [x] Implement equipment assignment.
+- [x] Implement equipment return.
+- [x] Implement equipment condition updates.
+- [x] Implement maintenance recording.
+- [x] Implement equipment retirement.
+- [x] Implement assignment history.
+- [x] Implement maintenance history.
+- [x] Implement equipment search.
+- [x] Implement category filters.
+- [x] Implement status filters.
 
 ### Business Validation
 
-- [ ] Prevent duplicate asset codes.
-- [ ] Prevent simultaneous project assignments.
-- [ ] Prevent assignment of damaged equipment.
-- [ ] Prevent assignment during maintenance.
-- [ ] Prevent assignment of retired equipment.
-- [ ] Update equipment status after return.
-- [ ] Generate maintenance reminders.
-- [ ] Generate activity records.
+- [x] Prevent duplicate asset codes.
+- [x] Prevent simultaneous project assignments.
+- [x] Prevent assignment of damaged equipment.
+- [x] Prevent assignment during maintenance.
+- [x] Prevent assignment of retired equipment.
+- [x] Update equipment status after return.
+- [x] Generate maintenance reminders.
+- [x] Generate activity records.
+
+Implementation notes:
+
+- `Equipment` gained `nextMaintenanceDate`; the table shows it and the form
+  schedules it. Assets without a scheduled service render a dash.
+- Asset codes are generated (`EQP-####`), so duplicate codes cannot be produced
+  from the interface; the service still owns the sequence.
+- `updateEquipment` edits descriptive fields only. Availability changes flow
+  through assign, return, maintenance, and retire, which each enforce their own
+  rules.
+- Retirement refuses while the asset is assigned, because retiring equipment
+  that is physically on a site would leave the project holding an asset the
+  register claims is out of service.
+- The register form remounts keyed by asset id on open rather than resetting
+  state inside an effect; the React 19 lint rule rejects setState in effects,
+  and remounting is the cleaner fix.
+- Maintenance reminders surface as the "Next service" column and the
+  dashboard's open-maintenance section.
 
 ### Acceptance Criteria
 
@@ -2024,7 +2042,7 @@ Update this section after each completed phase.
 | 12 | Stock Movements | P0 | Completed |
 | 13 | Construction Projects | P1 | Completed |
 | 14 | Material Requests | P1 | Completed |
-| 15 | Equipment Management | P1 | Pending |
+| 15 | Equipment Management | P1 | Completed |
 | 16 | Supplier Management | P1 | Pending |
 | 17 | Purchase Orders | P1 | Pending |
 | 18 | Reports and Analytics | P1 | Pending |

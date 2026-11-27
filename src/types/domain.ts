@@ -266,6 +266,8 @@ export interface Equipment {
   condition: EquipmentCondition;
   purchaseDate: ISODate;
   purchaseCostCentavos: Centavos;
+  /** Scheduled service date, if one is planned. */
+  nextMaintenanceDate?: ISODate;
   assignedProjectId?: ID;
   location: string;
   notes?: string;

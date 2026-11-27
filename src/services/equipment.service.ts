@@ -20,6 +20,7 @@ export interface RegisterEquipmentInput {
   purchaseDate: string;
   purchaseCostCentavos: number;
   location: string;
+  nextMaintenanceDate?: string;
   notes?: string;
 }
 
@@ -43,6 +44,7 @@ export function registerEquipment(
     condition: input.condition,
     purchaseDate: input.purchaseDate,
     purchaseCostCentavos: input.purchaseCostCentavos,
+    nextMaintenanceDate: input.nextMaintenanceDate,
     location: input.location.trim(),
     notes: input.notes,
     createdAt: ctx.now,
@@ -57,6 +59,87 @@ export function registerEquipment(
       entityType: "equipment",
       entityId: asset.id,
       description: `${asset.assetCode} ${asset.name} added as available.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
+  });
+}
+
+export interface UpdateEquipmentInput {
+  name?: string;
+  category?: string;
+  condition?: Equipment["condition"];
+  location?: string;
+  notes?: string;
+  nextMaintenanceDate?: string;
+}
+
+/** Edits descriptive fields. Availability changes go through assign/return. */
+export function updateEquipment(
+  data: DomainData,
+  equipmentId: string,
+  input: UpdateEquipmentInput,
+  ctx: OperationContext,
+): DomainResult<DomainData> {
+  const asset = data.equipment.find((entry) => entry.id === equipmentId);
+  if (!asset) return fail("Equipment not found");
+
+  if (input.name !== undefined && !input.name.trim()) {
+    return fail("Equipment name cannot be empty");
+  }
+  if (input.category !== undefined && !input.category.trim()) {
+    return fail("Category cannot be empty");
+  }
+
+  const updated: Equipment = {
+    ...asset,
+    ...input,
+    name: input.name?.trim() ?? asset.name,
+    category: input.category?.trim() ?? asset.category,
+    location: input.location?.trim() ?? asset.location,
+    updatedAt: ctx.now,
+  };
+
+  return succeed({
+    ...data,
+    equipment: data.equipment.map((entry) =>
+      entry.id === equipmentId ? updated : entry,
+    ),
+    activityLogs: appendActivity(data, {
+      action: "Equipment updated",
+      entityType: "equipment",
+      entityId: equipmentId,
+      description: `${asset.assetCode} ${updated.name} updated.`,
+      now: ctx.now,
+      actor: ctx.actor,
+    }),
+  });
+}
+
+export function retireEquipment(
+  data: DomainData,
+  equipmentId: string,
+  ctx: OperationContext,
+): DomainResult<DomainData> {
+  const asset = data.equipment.find((entry) => entry.id === equipmentId);
+  if (!asset) return fail("Equipment not found");
+  if (asset.status === "retired") return fail("Equipment is already retired");
+  if (asset.status === "assigned") {
+    return fail("Return the equipment before retiring it");
+  }
+
+  return succeed({
+    ...data,
+    equipment: data.equipment.map((entry) =>
+      entry.id === equipmentId
+        ? { ...entry, status: "retired", assignedProjectId: undefined, updatedAt: ctx.now }
+        : entry,
+    ),
+    activityLogs: appendActivity(data, {
+      action: "Equipment retired",
+      entityType: "equipment",
+      entityId: equipmentId,
+      description: `${asset.assetCode} ${asset.name} retired from service.`,
       now: ctx.now,
       actor: ctx.actor,
     }),

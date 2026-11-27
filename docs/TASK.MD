@@ -1437,20 +1437,32 @@ Implementation notes:
 
 Priority: P2
 
-- [ ] Create notification dropdown.
-- [ ] Display unread notification count.
-- [ ] Implement mark as read.
-- [ ] Implement mark all as read.
-- [ ] Implement notification dismissal.
-- [ ] Generate low-stock notifications.
-- [ ] Generate out-of-stock notifications.
-- [ ] Generate pending request notifications.
-- [ ] Generate request approval notifications.
-- [ ] Generate purchase order receiving notifications.
-- [ ] Generate equipment maintenance reminders.
-- [ ] Implement related module navigation.
-- [ ] Persist notification state.
-- [ ] Prevent duplicate alert generation.
+- [x] Create notification dropdown.
+- [x] Display unread notification count.
+- [x] Implement mark as read.
+- [x] Implement mark all as read.
+- [x] Implement notification dismissal.
+- [x] Generate low-stock notifications.
+- [x] Generate out-of-stock notifications.
+- [x] Generate pending request notifications.
+- [x] Generate request approval notifications.
+- [x] Generate purchase order receiving notifications.
+- [x] Generate equipment maintenance reminders.
+- [x] Implement related module navigation.
+- [x] Persist notification state.
+- [x] Prevent duplicate alert generation.
+Implementation notes:
+
+- Notifications are written by the domain services at the moment the event
+  happens: stock-out (low and out of stock), request submitted, request
+  approved, delivery received or partially received, and equipment entering
+  maintenance.
+- `appendNotification` drops a new alert when an identical unread one already
+  exists, so repeating an operation cannot stack duplicates.
+- Read state, dismissal, and the unread badge live in the persisted domain
+  store, so they survive a refresh along with the records they describe.
+- The header bell shows the unread count, supports mark-as-read per item, mark
+  all read, and dismissal; links navigate to the owning module.
 
 ### Acceptance Criteria
 
@@ -2102,7 +2114,7 @@ Update this section after each completed phase.
 | 17 | Purchase Orders | P1 | Completed |
 | 18 | Reports and Analytics | P1 | Completed |
 | 19 | Activity Logs | P1 | Completed |
-| 20 | Notifications | P2 | Pending |
+| 20 | Notifications | P2 | Completed |
 | 21 | Global Search | P2 | Pending |
 | 22 | Application Settings | P1 | Pending |
 | 23 | Responsive Design | P0 | Pending |

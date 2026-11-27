@@ -129,6 +129,9 @@ interface DomainStore extends DomainData {
 
   // Settings and data lifecycle
   updateSettings: (settings: ApplicationSettings) => DomainResult<void>;
+  markNotificationRead: (id: string) => void;
+  markAllNotificationsRead: () => void;
+  dismissNotification: (id: string) => void;
   resetDemoData: () => void;
   exportDemoData: () => DemoData;
   importDemoData: (raw: string) => DomainResult<void>;
@@ -272,6 +275,25 @@ export const useDomainStore = create<DomainStore>()(
           return succeed(undefined);
         },
         resetDemoData: () => set({ ...seedState(), recovered: false }),
+        markNotificationRead: (id) =>
+          set((state) => ({
+            notifications: state.notifications.map((notification) =>
+              notification.id === id ? { ...notification, read: true } : notification,
+            ),
+          })),
+        markAllNotificationsRead: () =>
+          set((state) => ({
+            notifications: state.notifications.map((notification) => ({
+              ...notification,
+              read: true,
+            })),
+          })),
+        dismissNotification: (id) =>
+          set((state) => ({
+            notifications: state.notifications.filter(
+              (notification) => notification.id !== id,
+            ),
+          })),
         exportDemoData: () => {
           const state = get();
           return {

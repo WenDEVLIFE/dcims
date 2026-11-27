@@ -233,19 +233,33 @@ export function recordStockOut(
       )
     : data.projectMaterials;
 
-  const remaining = available - input.quantity;
-  const notifications =
-    remaining <= material.reorderPoint
-      ? appendNotification(data, {
-          type: "warning",
-          title: "Low stock",
-          message: `${material.name} is down to ${remaining} in the issuing warehouse.`,
-          now: ctx.now,
-          link: "/materials",
-        })
-      : data.notifications;
-
   const warehouse = data.warehouses.find((item) => item.id === input.warehouseId)!;
+  const remaining = available - input.quantity;
+
+  let notifications = data.notifications;
+  if (remaining <= 0) {
+    notifications = appendNotification(
+      { ...data, notifications },
+      {
+        type: "warning",
+        title: "Out of stock",
+        message: `${material.name} is now out of stock at ${warehouse.name}.`,
+        now: ctx.now,
+        link: "/materials",
+      },
+    );
+  } else if (remaining <= material.reorderPoint) {
+    notifications = appendNotification(
+      { ...data, notifications },
+      {
+        type: "warning",
+        title: "Low stock",
+        message: `${material.name} is down to ${remaining} at ${warehouse.name}.`,
+        now: ctx.now,
+        link: "/materials",
+      },
+    );
+  }
 
   return succeed({
     ...data,

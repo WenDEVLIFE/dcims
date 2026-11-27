@@ -4,7 +4,7 @@ import { fail, succeed, type DomainResult } from "@/lib/result";
 import { generateId, generatePurchaseOrderNumber, nextSequence } from "@/lib/ids";
 import { calculatePurchaseOrderTotals } from "@/lib/procurement";
 import { recordStockIn } from "@/services/inventory.service";
-import { appendActivity, type OperationContext } from "@/services/support";
+import { appendActivity, appendNotification, type OperationContext } from "@/services/support";
 
 /**
  * Purchase order lifecycle.
@@ -216,6 +216,16 @@ export function receivePurchaseOrder(
       description: `${order.reference}: ${lines.length} line(s) received into the destination warehouse.`,
       now: ctx.now,
       actor: ctx.actor,
+    }),
+    notifications: appendNotification(next, {
+      type: "success",
+      title: complete ? "Delivery received" : "Partial delivery received",
+      message: `${order.reference} updated; ${updatedItems.reduce(
+        (total, item) => total + item.receivedQuantity,
+        0,
+      )} unit(s) received in total.`,
+      now: ctx.now,
+      link: "/purchase-orders",
     }),
   });
 }

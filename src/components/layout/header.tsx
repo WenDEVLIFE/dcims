@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { Suspense } from "react";
 
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
+import { NotificationsMenu } from "@/components/layout/notifications-menu";
 import { UserMenu } from "@/components/layout/user-menu";
 import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ export function Header() {
 
       <div className="ml-auto flex items-center gap-1">
         <ThemeSwitcher />
+        <NotificationsMenu />
         <UserMenu />
       </div>
     </header>

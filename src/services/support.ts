@@ -133,6 +133,10 @@ export function appendActivity(
   return [entry, ...data.activityLogs];
 }
 
+/**
+ * Appends a notification unless an identical unread one already exists.
+ * Repeating the same operation must not stack duplicate alerts.
+ */
 export function appendNotification(
   data: DomainData,
   notification: {
@@ -143,6 +147,14 @@ export function appendNotification(
     link?: string;
   },
 ): Notification[] {
+  const duplicate = data.notifications.some(
+    (entry) =>
+      !entry.read &&
+      entry.title === notification.title &&
+      entry.message === notification.message,
+  );
+  if (duplicate) return data.notifications;
+
   const entry: Notification = {
     id: generateId(),
     type: notification.type,

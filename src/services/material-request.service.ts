@@ -9,6 +9,7 @@ import {
   allocateProjectStock,
   balanceFor,
   appendActivity,
+  appendNotification,
   quantityAt,
   totalCost,
   type OperationContext,
@@ -37,7 +38,8 @@ export function createMaterialRequest(
   input: CreateRequestInput,
   ctx: OperationContext,
 ): DomainResult<DomainData> {
-  if (!data.projects.some((project) => project.id === input.projectId)) {
+  const project = data.projects.find((entry) => entry.id === input.projectId);
+  if (!project) {
     return fail("Project not found");
   }
   if (input.items.length === 0) return fail("Add at least one material");
@@ -88,6 +90,13 @@ export function createMaterialRequest(
       now: ctx.now,
       actor: ctx.actor,
     }),
+    notifications: appendNotification(data, {
+      type: "info",
+      title: "Request awaiting approval",
+      message: `${request.reference} for ${project.name} needs a decision.`,
+      now: ctx.now,
+      link: "/material-requests",
+    }),
   });
 }
 
@@ -125,6 +134,13 @@ export function approveMaterialRequest(
       description: `${updated.reference} approved. Stock is not deducted until fulfilment.`,
       now: ctx.now,
       actor: ctx.actor,
+    }),
+    notifications: appendNotification(data, {
+      type: "success",
+      title: "Request approved",
+      message: `${updated.reference} is approved and ready for warehouse release.`,
+      now: ctx.now,
+      link: "/material-requests",
     }),
   });
 }

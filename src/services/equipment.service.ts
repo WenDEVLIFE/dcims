@@ -6,7 +6,7 @@ import type {
 import type { DomainData } from "@/types/state";
 import { fail, succeed, type DomainResult } from "@/lib/result";
 import { generateId, generateEquipmentAssetCode, nextSequence } from "@/lib/ids";
-import { appendActivity, type OperationContext } from "@/services/support";
+import { appendActivity, appendNotification, type OperationContext } from "@/services/support";
 
 /**
  * Equipment rules: an asset can only be assigned while available, and a
@@ -313,5 +313,14 @@ export function recordEquipmentMaintenance(
       now: ctx.now,
       actor: ctx.actor,
     }),
+    notifications: input.completed
+      ? data.notifications
+      : appendNotification(data, {
+          type: "warning",
+          title: "Equipment under maintenance",
+          message: `${asset.assetCode} ${asset.name} is unavailable until the service is completed.`,
+          now: ctx.now,
+          link: "/equipment",
+        }),
   });
 }

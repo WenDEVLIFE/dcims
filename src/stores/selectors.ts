@@ -1,4 +1,4 @@
-import type { Centavos } from "@/types/domain";
+import type { ActivityLog, Centavos } from "@/types/domain";
 import type { DomainData } from "@/types/state";
 import { balanceUnitCost, calculateInventoryValue } from "@/lib/inventory";
 
@@ -299,6 +299,98 @@ export function recentActivity(state: DomainData, limit = 6) {
   return [...state.activityLogs]
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
     .slice(0, limit);
+}
+
+/* ------------------------------------------------------------------ */
+/* Activity log                                                        */
+/* ------------------------------------------------------------------ */
+
+export function activityModuleLabel(entityType: ActivityLog["entityType"]): string {
+  switch (entityType) {
+    case "stock-movement":
+      return "Stock movements";
+    case "material":
+      return "Materials";
+    case "category":
+      return "Categories";
+    case "warehouse":
+      return "Warehouses";
+    case "project":
+      return "Projects";
+    case "material-request":
+      return "Material requests";
+    case "equipment":
+      return "Equipment";
+    case "supplier":
+      return "Suppliers";
+    case "purchase-order":
+      return "Purchase orders";
+    case "settings":
+      return "Settings";
+    default:
+      return entityType;
+  }
+}
+
+export function activityRoute(log: ActivityLog): string {
+  switch (log.entityType) {
+    case "stock-movement":
+      return "/stock-movements";
+    case "material":
+      return "/materials";
+    case "category":
+      return "/categories";
+    case "warehouse":
+      return "/warehouses";
+    case "project":
+      return `/projects/${log.entityId}`;
+    case "material-request":
+      return "/material-requests";
+    case "equipment":
+      return "/equipment";
+    case "supplier":
+      return "/suppliers";
+    case "purchase-order":
+      return "/purchase-orders";
+    case "settings":
+      return "/settings";
+    default:
+      return "/dashboard";
+  }
+}
+
+/** Business reference of the record an activity entry refers to. */
+export function activityReference(state: DomainData, log: ActivityLog): string {
+  switch (log.entityType) {
+    case "stock-movement":
+      return state.stockMovements.find((entry) => entry.id === log.entityId)?.reference ?? "—";
+    case "material":
+      return state.materials.find((entry) => entry.id === log.entityId)?.sku ?? "—";
+    case "category":
+      return state.categories.find((entry) => entry.id === log.entityId)?.code ?? "—";
+    case "warehouse":
+      return state.warehouses.find((entry) => entry.id === log.entityId)?.code ?? "—";
+    case "project":
+      return state.projects.find((entry) => entry.id === log.entityId)?.code ?? "—";
+    case "material-request":
+      return (
+        state.materialRequests.find((entry) => entry.id === log.entityId)?.reference ?? "—"
+      );
+    case "equipment":
+      return state.equipment.find((entry) => entry.id === log.entityId)?.assetCode ?? "—";
+    case "supplier":
+      return state.suppliers.find((entry) => entry.id === log.entityId)?.code ?? "—";
+    case "purchase-order":
+      return (
+        state.purchaseOrders.find((entry) => entry.id === log.entityId)?.reference ?? "—"
+      );
+    default:
+      return "—";
+  }
+}
+
+export function activityActions(state: DomainData): string[] {
+  return [...new Set(state.activityLogs.map((log) => log.action))].sort();
 }
 
 /* ------------------------------------------------------------------ */

@@ -1398,20 +1398,33 @@ Implementation notes:
 
 Priority: P1
 
-- [ ] Create activity logs page.
-- [ ] Create activity timeline or table.
-- [ ] Display action descriptions.
-- [ ] Display related module.
-- [ ] Display reference numbers.
-- [ ] Display demo user information.
-- [ ] Display timestamps.
-- [ ] Implement activity search.
-- [ ] Implement module filter.
-- [ ] Implement action filter.
-- [ ] Implement date range filter.
-- [ ] Implement pagination.
-- [ ] Implement related record navigation.
-- [ ] Verify activity generation across modules.
+- [x] Create activity logs page.
+- [x] Create activity timeline or table.
+- [x] Display action descriptions.
+- [x] Display related module.
+- [x] Display reference numbers.
+- [x] Display demo user information.
+- [x] Display timestamps.
+- [x] Implement activity search.
+- [x] Implement module filter.
+- [x] Implement action filter.
+- [x] Implement date range filter.
+- [x] Implement pagination.
+- [x] Implement related record navigation.
+- [x] Verify activity generation across modules.
+Implementation notes:
+
+- Activity entries are written by the domain services themselves, so the log
+  cannot contain an operation the dataset did not perform. The page only reads.
+- References are resolved from the referenced record (movement reference,
+  request number, PO number, project code, SKU, asset code) rather than
+  duplicated into the log entry, so a renamed record cannot desynchronise them.
+- Related-record navigation maps each entity type to its module route; projects
+  deep-link to the detail page.
+- The page states plainly that logs are simulated and not tamper-proof, matching
+  the documented demonstration limits.
+- Filtering by module and by action is exposed separately: module answers "where
+  did this happen", action answers "what happened".
 
 ### Acceptance Criteria
 
@@ -2088,7 +2101,7 @@ Update this section after each completed phase.
 | 16 | Supplier Management | P1 | Completed |
 | 17 | Purchase Orders | P1 | Completed |
 | 18 | Reports and Analytics | P1 | Completed |
-| 19 | Activity Logs | P1 | Pending |
+| 19 | Activity Logs | P1 | Completed |
 | 20 | Notifications | P2 | Pending |
 | 21 | Global Search | P2 | Pending |
 | 22 | Application Settings | P1 | Pending |

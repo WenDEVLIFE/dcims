@@ -7,7 +7,6 @@ import type { DemoData } from "@/schemas/import";
 import { DEMO_DATA_VERSION, demoDataSchema, parseDemoData } from "@/schemas/import";
 import type { DomainData } from "@/types/state";
 import type {
-  ApplicationSettings,
   ConstructionProject,
   Equipment,
   Material,
@@ -128,7 +127,7 @@ interface DomainStore extends DomainData {
   recordEquipmentMaintenance: (input: equipmentService.MaintenanceInput) => DomainResult<void>;
 
   // Settings and data lifecycle
-  updateSettings: (settings: ApplicationSettings) => DomainResult<void>;
+  updateSettings: (settings: DomainData["settings"]) => DomainResult<void>;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   dismissNotification: (id: string) => void;

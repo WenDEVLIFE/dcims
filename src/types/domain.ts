@@ -439,6 +439,12 @@ export interface ApplicationSettings {
     lowStock: boolean;
     pendingRequests: boolean;
     overduePurchaseOrders: boolean;
+    maintenanceReminders?: boolean;
+  };
+  preferences?: {
+    defaultWarehouseId?: string;
+    defaultUnit?: MaterialUnit;
+    tableDensity?: "comfortable" | "compact";
   };
   updatedAt: ISOTimestamp;
 }

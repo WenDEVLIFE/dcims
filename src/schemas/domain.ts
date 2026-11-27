@@ -265,7 +265,15 @@ export const applicationSettingsSchema = z.object({
     lowStock: z.boolean(),
     pendingRequests: z.boolean(),
     overduePurchaseOrders: z.boolean(),
+    maintenanceReminders: z.boolean().optional(),
   }),
+  preferences: z
+    .object({
+      defaultWarehouseId: z.string().optional(),
+      defaultUnit: z.enum(MATERIAL_UNITS).optional(),
+      tableDensity: z.enum(["comfortable", "compact"]).optional(),
+    })
+    .optional(),
   updatedAt: timestampSchema,
 });
 

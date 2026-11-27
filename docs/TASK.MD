@@ -1514,19 +1514,19 @@ Priority: P1
 
 ### Company Profile
 
-- [ ] Display fictional company information.
-- [ ] Edit company name.
-- [ ] Edit company address.
-- [ ] Edit company contact information.
-- [ ] Persist company settings.
+- [x] Display fictional company information.
+- [x] Edit company name.
+- [x] Edit company address.
+- [x] Edit company contact information.
+- [x] Persist company settings.
 
 ### Demo User Profile
 
-- [ ] Display demo user information.
-- [ ] Edit demo user name.
-- [ ] Edit demo user role label.
-- [ ] Edit demo user contact information.
-- [ ] Persist profile settings.
+- [x] Display demo user information.
+- [x] Edit demo user name.
+- [x] Edit demo user role label.
+- [x] Edit demo user contact information.
+- [x] Persist profile settings.
 
 Demo user roles are presentation-only.
 
@@ -1534,43 +1534,58 @@ Do not implement or claim real access control.
 
 ### Appearance
 
-- [ ] Light theme.
-- [ ] Dark theme.
-- [ ] System theme.
-- [ ] Sidebar preference.
-- [ ] Table density preference.
+- [x] Light theme.
+- [x] Dark theme.
+- [x] System theme.
+- [x] Sidebar preference.
+- [x] Table density preference.
 
 ### Inventory Preferences
 
-- [ ] Default reorder level.
-- [ ] Default warehouse.
-- [ ] Default measurement unit where applicable.
+- [x] Default reorder level.
+- [x] Default warehouse.
+- [x] Default measurement unit where applicable.
 
 ### Notification Preferences
 
-- [ ] Enable or disable low-stock alerts.
-- [ ] Enable or disable request alerts.
-- [ ] Enable or disable maintenance reminders.
+- [x] Enable or disable low-stock alerts.
+- [x] Enable or disable request alerts.
+- [x] Enable or disable maintenance reminders.
 
 ### Demo Data Management
 
-- [ ] Export complete demo data as JSON.
-- [ ] Import validated JSON data.
-- [ ] Validate schema version.
-- [ ] Validate entity relationships.
-- [ ] Reject invalid imported data.
-- [ ] Implement reset demo data.
-- [ ] Require reset confirmation.
-- [ ] Restore original seed data.
+- [x] Export complete demo data as JSON.
+- [x] Import validated JSON data.
+- [x] Validate schema version.
+- [x] Validate entity relationships.
+- [x] Reject invalid imported data.
+- [x] Implement reset demo data.
+- [x] Require reset confirmation.
+- [x] Restore original seed data.
 
 ### About Application
 
-- [ ] Display DCIMS logo.
-- [ ] Display application name.
-- [ ] Display application version.
-- [ ] Display technology stack.
-- [ ] Display project description.
-- [ ] Display portfolio demonstration disclaimer.
+- [x] Display DCIMS logo.
+- [x] Display application name.
+- [x] Display application version.
+- [x] Display technology stack.
+- [x] Display project description.
+- [x] Display portfolio demonstration disclaimer.
+Implementation notes:
+
+- Settings are stored in the persisted domain store, so company, profile,
+  inventory defaults, notification preferences, and table density survive a
+  refresh.
+- Demo user roles are explicitly labelled presentation-only; nothing in the app
+  claims they enforce access.
+- Table density writes a `data-density` attribute on the document and CSS
+  reacts to it, so every table honours the preference without threading props.
+- Import validates the complete file with the shared schema before replacing
+  anything; invalid files leave existing data untouched.
+- Reset restores the seed dataset and requires explicit confirmation, and the
+  screen tells you to export first.
+- About states the stack, locale, fictional-data policy, and the demonstration
+  disclaimer required by the project rules.
 
 ### Acceptance Criteria
 
@@ -2129,7 +2144,7 @@ Update this section after each completed phase.
 | 19 | Activity Logs | P1 | Completed |
 | 20 | Notifications | P2 | Completed |
 | 21 | Global Search | P2 | Completed |
-| 22 | Application Settings | P1 | Pending |
+| 22 | Application Settings | P1 | Completed |
 | 23 | Responsive Design | P0 | Pending |
 | 24 | Accessibility | P1 | Pending |
 | 25 | Business Logic Testing | P0 | Pending |

@@ -234,6 +234,13 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Compact table density, driven by the settings preference. */
+[data-density="compact"] table th,
+[data-density="compact"] table td {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
 /* Print-friendly reports: navigation and controls are hidden so the printed
    page contains only the report body, its metadata, and totals. */
 @media print {

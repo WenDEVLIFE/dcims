@@ -25,6 +25,12 @@ export const settings: ApplicationSettings = {
     lowStock: true,
     pendingRequests: true,
     overduePurchaseOrders: false,
+    maintenanceReminders: true,
+  },
+  preferences: {
+    defaultWarehouseId: "wh-matina",
+    defaultUnit: "piece",
+    tableDensity: "comfortable",
   },
   updatedAt: isoAt(110, 16, 20),
 };

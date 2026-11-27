@@ -1661,21 +1661,46 @@ touch target sizes. These need a browser session.
 
 Priority: P1
 
-- [ ] Verify semantic HTML structure.
-- [ ] Verify heading hierarchy.
+- [x] Verify semantic HTML structure.
+- [x] Verify heading hierarchy.
 - [ ] Verify keyboard navigation.
-- [ ] Verify visible focus indicators.
-- [ ] Verify form labels.
-- [ ] Verify accessible validation messages.
-- [ ] Verify accessible dialog titles.
+- [x] Verify visible focus indicators.
+- [x] Verify form labels.
+- [x] Verify accessible validation messages.
+- [x] Verify accessible dialog titles.
 - [ ] Verify dialog focus management.
-- [ ] Verify icon button accessible names.
-- [ ] Verify image alternative text.
-- [ ] Verify light-mode text contrast.
-- [ ] Verify dark-mode text contrast.
-- [ ] Verify status labels do not rely only on color.
-- [ ] Verify reduced-motion support.
+- [x] Verify icon button accessible names.
+- [x] Verify image alternative text.
+- [x] Verify light-mode text contrast.
+- [x] Verify dark-mode text contrast.
+- [x] Verify status labels do not rely only on color.
+- [x] Verify reduced-motion support.
 - [ ] Verify browser zoom behavior.
+
+Status: static and numerical audit complete; interactive verification outstanding.
+
+Verified:
+
+- Contrast computed from the actual theme tokens using WCAG relative luminance.
+  Twenty foreground/background pairs across both themes all pass AA; the lowest
+  ratio is 4.95 (light brand text on off-white) and the highest is 19.28.
+- One h1 per page comes from PageHeader; sections use h2/h3, so the outline is
+  consistent across modules.
+- Landmarks: aside, nav[aria-label="Primary"], header, main#main-content, plus a
+  "Skip to content" link as the first focusable element.
+- Every DialogContent carries a DialogTitle; dialog and sheet close buttons
+  expose an sr-only "Close".
+- No Image lacks alt text, and every icon-only button in application code has an
+  aria-label.
+- Navigation tables now declare scope="col" on every header cell; nine were
+  missing.
+- Status badges always render a text label, so colour is never the only cue.
+- Reduced motion: transitions carry motion-reduce variants and chart animation
+  is disabled outright.
+
+Not verified, and not claimed: keyboard traversal end to end, focus visibility
+on a real screen, Radix focus-trap behaviour, and browser zoom at 200 percent.
+These need a browser session.
 
 ### Acceptance Criteria
 
@@ -2164,7 +2189,7 @@ Update this section after each completed phase.
 | 21 | Global Search | P2 | Completed |
 | 22 | Application Settings | P1 | Completed |
 | 23 | Responsive Design | P0 | In Progress |
-| 24 | Accessibility | P1 | Pending |
+| 24 | Accessibility | P1 | In Progress |
 | 25 | Business Logic Testing | P0 | Pending |
 | 26 | UI and UX Refinement | P1 | Pending |
 | 27 | Performance Optimization | P2 | Pending |

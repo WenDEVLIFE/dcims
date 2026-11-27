@@ -395,7 +395,7 @@ function OrderDetailsDialog({
         <DialogHeader>
           <DialogTitle className="font-mono text-base">{order.reference}</DialogTitle>
           <DialogDescription>
-            {supplier?.name ?? "Supplier"} → {warehouse?.name ?? "Warehouse"} ·{" "}
+            {supplier?.name ?? "Supplier"} 鈫?{warehouse?.name ?? "Warehouse"} 路{" "}
             {labelForStatus(order.status)}
           </DialogDescription>
         </DialogHeader>
@@ -404,11 +404,11 @@ function OrderDetailsDialog({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-secondary/60 text-left">
-                <th className="px-3 py-2 text-xs font-semibold text-muted-foreground">Material</th>
-                <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Ordered</th>
-                <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Received</th>
-                <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Unit cost</th>
-                <th className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Line total</th>
+                <th scope="col" className="px-3 py-2 text-xs font-semibold text-muted-foreground">Material</th>
+                <th scope="col" className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Ordered</th>
+                <th scope="col" className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Received</th>
+                <th scope="col" className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Unit cost</th>
+                <th scope="col" className="px-3 py-2 text-right text-xs font-semibold text-muted-foreground">Line total</th>
               </tr>
             </thead>
             <tbody>

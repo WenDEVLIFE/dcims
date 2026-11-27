@@ -72,7 +72,7 @@ export function MonthlyMovementChart({ data }: MovementChartProps) {
             "Movements",
           ]}
         />
-        <Bar dataKey="value" fill={CHART_COLORS[0]} radius={[4, 4, 0, 0]} />
+        <Bar dataKey="value" fill={CHART_COLORS[0]} radius={[4, 4, 0, 0]} isAnimationActive={false} />
       </BarChart>
     </ChartContainer>
   );
@@ -98,6 +98,7 @@ export function CategoryValueChart({ data }: MovementChartProps) {
           paddingAngle={1}
           stroke="var(--color-card)"
           strokeWidth={2}
+          isAnimationActive={false}
         >
           {data.map((entry, index) => (
             <Cell
@@ -142,7 +143,7 @@ export function WarehouseValueChart({ data }: MovementChartProps) {
           contentStyle={TOOLTIP_STYLE}
           formatter={(value) => formatCentavos(Number(value ?? 0))}
         />
-        <Bar dataKey="value" fill={CHART_COLORS[1]} radius={[0, 4, 4, 0]} />
+        <Bar dataKey="value" fill={CHART_COLORS[1]} radius={[0, 4, 4, 0]} isAnimationActive={false} />
       </BarChart>
     </ChartContainer>
   );
@@ -179,7 +180,7 @@ export function ProjectExpenditureChart({ data }: MovementChartProps) {
           contentStyle={TOOLTIP_STYLE}
           formatter={(value) => formatCentavos(Number(value ?? 0))}
         />
-        <Bar dataKey="value" fill={CHART_COLORS[2]} radius={[0, 4, 4, 0]} />
+        <Bar dataKey="value" fill={CHART_COLORS[2]} radius={[0, 4, 4, 0]} isAnimationActive={false} />
       </BarChart>
     </ChartContainer>
   );
@@ -209,6 +210,7 @@ export function ProcurementTrendChart({ data }: MovementChartProps) {
           dataKey="value"
           stroke={CHART_COLORS[0]}
           strokeWidth={2}
+          isAnimationActive={false}
           dot={{ r: 3, fill: CHART_COLORS[0] }}
           activeDot={{ r: 4 }}
         />

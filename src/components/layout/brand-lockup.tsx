@@ -1,7 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
-import brandIcon from "../../../public/dcims-icon.png";
+import { LogoMark } from "@/components/shared/logo-mark";
 import { HOME_ROUTE } from "@/constants/navigation";
 import { cn } from "@/lib/utils";
 
@@ -28,14 +27,7 @@ export function BrandLockup({ collapsed = false, onNavigate }: BrandLockupProps)
         collapsed && "justify-center",
       )}
     >
-      <Image
-        src={brandIcon}
-        alt=""
-        aria-hidden="true"
-        priority
-        sizes="32px"
-        className="size-8 shrink-0 rounded-[0.375rem] object-contain"
-      />
+      <LogoMark size={32} priority onDark />
       <span className={cn("flex min-w-0 flex-col", collapsed && "sr-only")}>
         <span className="truncate font-heading text-sm leading-5 font-bold tracking-tight text-sidebar-foreground">
           DCIMS

@@ -1,12 +1,22 @@
 "use client";
 
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useId, useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const subscribeToMount = () => () => {};
 
 export function ThemeSwitcher() {
-  const id = useId();
   const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
     subscribeToMount,
@@ -14,22 +24,39 @@ export function ThemeSwitcher() {
     () => false,
   );
 
+  const resolved = mounted ? (theme ?? "system") : "system";
+
   return (
-    <div className="flex items-center gap-2">
-      <label htmlFor={id} className="text-sm font-medium">
-        Theme
-      </label>
-      <select
-        id={id}
-        className="min-h-11 rounded-md border border-muted-foreground bg-card px-3 text-base text-card-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:opacity-60 sm:text-sm"
-        disabled={!mounted}
-        value={mounted ? theme ?? "system" : "system"}
-        onChange={(event) => setTheme(event.currentTarget.value)}
-      >
-        <option value="system">System</option>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-      </select>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Change theme"
+          className="cursor-pointer text-muted-foreground hover:text-foreground"
+        >
+          {resolved === "dark" ? (
+            <Moon aria-hidden="true" />
+          ) : (
+            <Sun aria-hidden="true" />
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+        <DropdownMenuRadioGroup value={resolved} onValueChange={setTheme}>
+          <DropdownMenuRadioItem value="light" className="cursor-pointer">
+            Light
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="dark" className="cursor-pointer">
+            Dark
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="system" className="cursor-pointer">
+            <Monitor aria-hidden="true" className="mr-2 size-3.5" />
+            System
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

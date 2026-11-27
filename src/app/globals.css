@@ -7,7 +7,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-manrope);
   --font-mono: var(--font-jetbrains-mono);
   --font-heading: var(--font-manrope);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -181,6 +181,16 @@
     @apply border-border outline-ring/50;
   }
 
+  /*
+   * Tailwind v4 preflight leaves native buttons on the default cursor.
+   * Interactive controls must read as clickable, so the base layer opts in
+   * once instead of repeating cursor-pointer on every component.
+   */
+  button:not(:disabled):not([aria-disabled="true"]),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
   body {
     @apply bg-background font-sans text-foreground;
     font-size: 0.875rem;
@@ -222,4 +232,34 @@
 
 @utility numeric {
   font-variant-numeric: tabular-nums;
+}
+
+/* Compact table density, driven by the settings preference. */
+[data-density="compact"] table th,
+[data-density="compact"] table td {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+/* Print-friendly reports: navigation and controls are hidden so the printed
+   page contains only the report body, its metadata, and totals. */
+@media print {
+  aside,
+  header,
+  .print-hide {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
 }

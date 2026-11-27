@@ -21,14 +21,18 @@ numerical values, dashboard metrics, and navigation.
 
 ## 2. Font Families
 
-### Primary Font — Inter
+### Application Font — Manrope
 
-Font Family: Inter
+Font Family: Manrope
 
 Category: Sans-serif
 
 Usage:
 
+- Page titles
+- Section headings
+- Dashboard headings
+- KPI values
 - Body text
 - Navigation
 - Data tables
@@ -45,33 +49,24 @@ Supported weights:
 - 500 Medium
 - 600 SemiBold
 - 700 Bold
-
-Inter is the default application font.
-
-### Heading Font — Manrope
-
-Font Family: Manrope
-
-Category: Sans-serif
-
-Usage:
-
-- Page titles
-- Section headings
-- Dashboard headings
-- KPI values
-- Module headings
-- Branding text
-
-Supported weights:
-
-- 500 Medium
-- 600 SemiBold
-- 700 Bold
 - 800 ExtraBold
 
-Manrope provides a modern and structured
-industrial SaaS appearance.
+Manrope is the default application font. It carries both
+visual hierarchy and body text; weight, size, and color
+create the hierarchy that a second text family would
+otherwise provide.
+
+Do not introduce a second text family.
+
+Specification note:
+
+This system previously specified Inter as the primary
+text face. Inter, Geist, Space Grotesk, and Poppins are
+excluded by the project's anti-ai-slop design rules, which
+also cap the interface at two font families. Manrope plus
+JetBrains Mono satisfies both constraints without adding a
+typeface. This amendment is approved and supersedes the
+earlier Inter specification.
 
 ### Monospace Font — JetBrains Mono
 
@@ -97,7 +92,7 @@ Supported weights:
 
 Do not use monospace fonts for general body text.
 
-Use tabular numerals with Inter or Manrope for
+Use tabular numerals with Manrope for
 most financial and numerical values.
 
 ## 3. Next.js Font Configuration
@@ -112,18 +107,11 @@ Implementation:
 
 import type { Metadata } from "next";
 import {
-  Inter,
   Manrope,
   JetBrains_Mono,
 } from "next/font/google";
 
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -158,7 +146,6 @@ export default function RootLayout({
     <html lang="en-PH" suppressHydrationWarning>
       <body
         className={[
-          inter.variable,
           manrope.variable,
           jetbrainsMono.variable,
           "font-sans",
@@ -189,13 +176,13 @@ inside src/app/globals.css.
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-manrope);
   --font-heading: var(--font-manrope);
   --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
-  font-family: var(--font-inter), Arial, sans-serif;
+  font-family: var(--font-manrope), Arial, sans-serif;
   font-size: 14px;
   line-height: 1.5;
   font-weight: 400;
@@ -337,7 +324,7 @@ font-heading text-lg leading-[26px] font-semibold
 
 ### Heading 5
 
-Font: Inter
+Font: Manrope
 
 Size: 16px
 
@@ -357,7 +344,7 @@ text-base leading-6 font-semibold
 
 ### Body Large
 
-Font: Inter
+Font: Manrope
 
 Size: 16px
 
@@ -376,7 +363,7 @@ text-base leading-6 font-normal
 
 ### Body Default
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -397,7 +384,7 @@ text-sm leading-[21px] font-normal
 
 ### Body Small
 
-Font: Inter
+Font: Manrope
 
 Size: 13px
 
@@ -417,7 +404,7 @@ text-[13px] leading-5 font-normal
 
 ### Caption
 
-Font: Inter
+Font: Manrope
 
 Size: 12px
 
@@ -438,7 +425,7 @@ text-xs leading-4 font-normal
 
 ### Overline
 
-Font: Inter
+Font: Manrope
 
 Size: 11px
 
@@ -515,7 +502,7 @@ primary and secondary information.
 
 ### KPI Label
 
-Font: Inter
+Font: Manrope
 
 Size: 13px
 
@@ -547,7 +534,7 @@ Example:
 
 ### KPI Supporting Text
 
-Font: Inter
+Font: Manrope
 
 Size: 12px
 
@@ -565,7 +552,7 @@ Weight: 600
 
 ### Chart Description
 
-Font: Inter
+Font: Manrope
 
 Size: 13px
 
@@ -573,7 +560,7 @@ Weight: 400
 
 ### Chart Axis Labels
 
-Font: Inter
+Font: Manrope
 
 Size: 11px to 12px
 
@@ -581,7 +568,7 @@ Weight: 400
 
 ### Chart Tooltip
 
-Font: Inter
+Font: Manrope
 
 Size: 13px
 
@@ -593,7 +580,7 @@ All chart values must remain readable in both themes.
 
 ### Sidebar Section Labels
 
-Font: Inter
+Font: Manrope
 
 Size: 11px
 
@@ -607,7 +594,7 @@ Color: Sidebar muted foreground
 
 ### Sidebar Navigation Items
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -617,7 +604,7 @@ Line Height: 20px
 
 ### Active Navigation Item
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -627,7 +614,7 @@ Use the active navigation foreground token.
 
 ### Breadcrumbs
 
-Font: Inter
+Font: Manrope
 
 Size: 13px
 
@@ -643,7 +630,7 @@ Color: Foreground
 
 ### Column Headers
 
-Font: Inter
+Font: Manrope
 
 Size: 12px to 13px
 
@@ -663,7 +650,7 @@ Examples:
 
 ### Table Cell Content
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -673,7 +660,7 @@ Line Height: 20px
 
 ### Primary Record Name
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -681,7 +668,7 @@ Weight: 500
 
 ### Secondary Record Information
 
-Font: Inter
+Font: Manrope
 
 Size: 12px
 
@@ -691,7 +678,7 @@ Color: Muted foreground
 
 ### Numerical Cells
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -723,7 +710,7 @@ Avoid excessive letter spacing on identifiers.
 
 ### Form Label
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -733,7 +720,7 @@ Line Height: 20px
 
 ### Input Text
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -746,7 +733,7 @@ to prevent automatic browser zoom.
 
 ### Placeholder
 
-Font: Inter
+Font: Manrope
 
 Size: Inherit from input
 
@@ -756,7 +743,7 @@ Color: Muted foreground
 
 ### Helper Text
 
-Font: Inter
+Font: Manrope
 
 Size: 12px
 
@@ -766,7 +753,7 @@ Line Height: 18px
 
 ### Error Message
 
-Font: Inter
+Font: Manrope
 
 Size: 12px to 13px
 
@@ -784,7 +771,7 @@ Provide accessible required-field semantics.
 
 ### Primary Buttons
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -794,7 +781,7 @@ Line Height: 20px
 
 ### Secondary Buttons
 
-Font: Inter
+Font: Manrope
 
 Size: 14px
 
@@ -802,7 +789,7 @@ Weight: 500
 
 ### Small Buttons
 
-Font: Inter
+Font: Manrope
 
 Size: 12px to 13px
 
@@ -810,7 +797,7 @@ Weight: 500
 
 ### Large Buttons
 
-Font: Inter
+Font: Manrope
 
 Size: 15px to 16px
 
@@ -834,7 +821,7 @@ Avoid:
 
 ## 12. Status Badge Typography
 
-Font: Inter
+Font: Manrope
 
 Size: 11px to 12px
 
@@ -1160,7 +1147,7 @@ not merely visual appearance.
 
 DO NOT use:
 
-- More than three font families
+- More than two font families
 - Decorative script fonts
 - Serif fonts for general interface text
 - Excessive uppercase text
@@ -1178,8 +1165,8 @@ professional, and suitable for data-intensive interfaces.
 
 Use:
 
-- Manrope for visual hierarchy and headings.
-- Inter for general application readability.
+- Manrope for visual hierarchy, headings, and general
+  application readability.
 - JetBrains Mono for technical identifiers.
 - Tabular numerals for financial and inventory values.
 

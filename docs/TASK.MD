@@ -1182,25 +1182,36 @@ Implementation notes:
 
 Priority: P1
 
-- [ ] Create suppliers page.
-- [ ] Create supplier summary cards.
-- [ ] Create supplier data table.
-- [ ] Display company information.
-- [ ] Display contact information.
-- [ ] Display material categories.
-- [ ] Display payment terms.
-- [ ] Display supplier status.
-- [ ] Implement create supplier form.
-- [ ] Implement edit supplier form.
-- [ ] Implement supplier details view.
-- [ ] Display supplied materials.
-- [ ] Display purchase order history.
-- [ ] Implement supplier search.
-- [ ] Implement supplier status filters.
-- [ ] Implement supplier category filters.
-- [ ] Prevent invalid contact information.
-- [ ] Prevent ordering from inactive suppliers.
-- [ ] Generate activity records.
+- [x] Create suppliers page.
+- [x] Create supplier summary cards.
+- [x] Create supplier data table.
+- [x] Display company information.
+- [x] Display contact information.
+- [x] Display material categories.
+- [x] Display payment terms.
+- [x] Display supplier status.
+- [x] Implement create supplier form.
+- [x] Implement edit supplier form.
+- [x] Implement supplier details view.
+- [x] Display supplied materials.
+- [x] Display purchase order history.
+- [x] Implement supplier search.
+- [x] Implement supplier status filters.
+- [x] Implement supplier category filters.
+- [x] Prevent invalid contact information.
+- [x] Prevent ordering from inactive suppliers.
+- [x] Generate activity records.
+
+Implementation notes:
+
+- Supplier categories and supplied materials are derived from purchase order
+  history rather than stored on the supplier. A supplier's categories therefore
+  always describe what was actually ordered, and cannot drift from the orders.
+- A supplier with no orders shows "No orders yet" instead of an empty
+  capability list, which would imply knowledge the demo does not have.
+- Email format is validated on create and edit, and `createPurchaseOrder` still
+  rejects inactive suppliers independently of the interface.
+- Deactivating a supplier keeps its history intact; only new orders are blocked.
 
 ### Acceptance Criteria
 
@@ -2043,7 +2054,7 @@ Update this section after each completed phase.
 | 13 | Construction Projects | P1 | Completed |
 | 14 | Material Requests | P1 | Completed |
 | 15 | Equipment Management | P1 | Completed |
-| 16 | Supplier Management | P1 | Pending |
+| 16 | Supplier Management | P1 | Completed |
 | 17 | Purchase Orders | P1 | Pending |
 | 18 | Reports and Analytics | P1 | Pending |
 | 19 | Activity Logs | P1 | Pending |

@@ -302,6 +302,54 @@ export function recentActivity(state: DomainData, limit = 6) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Suppliers                                                           */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Supplier capabilities and history are derived from purchase orders, so a
+ * supplier's categories never drift from what they have actually been ordered.
+ */
+export function supplierOverview(state: DomainData) {
+  return state.suppliers.map((supplier) => {
+    const orders = state.purchaseOrders
+      .filter((order) => order.supplierId === supplier.id)
+      .sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+
+    const materialIds = new Set<string>();
+    for (const order of orders) {
+      for (const item of order.items) materialIds.add(item.materialId);
+    }
+
+    const materials = [...materialIds]
+      .map((id) => state.materials.find((material) => material.id === id))
+      .filter((material): material is NonNullable<typeof material> => material !== undefined);
+
+    const categories = [
+      ...new Set(
+        materials.map(
+          (material) =>
+            state.categories.find((category) => category.id === material.categoryId)
+              ?.name ?? "Uncategorised",
+        ),
+      ),
+    ].sort();
+
+    const committedCentavos = orders
+      .filter((order) => order.status !== "cancelled")
+      .reduce((total, order) => total + order.totalCentavos, 0);
+
+    return {
+      supplier,
+      orders,
+      materials,
+      categories,
+      committedCentavos,
+      lastOrderAt: orders[0]?.createdAt,
+    };
+  });
+}
+
+/* ------------------------------------------------------------------ */
 /* Projects                                                            */
 /* ------------------------------------------------------------------ */
 
